@@ -1,21 +1,27 @@
 package frc.robot.subsystems;
 
+
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANrange;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 public class Sonar extends SubsystemBase {
     private final CANrange canRangeFinder;
     private final List<Double> distances;
     private final double conversionFactor = 100; // Conversion factor from meters to centimeters
     private final Timer timer;
+    private double median;
+
 
     public Sonar(int deviceID) {
         canRangeFinder = new CANrange(deviceID);
@@ -23,7 +29,7 @@ public class Sonar extends SubsystemBase {
         timer = new Timer();
         timer.start();
     }
-    private double median;
+
 
     @Override
     public void periodic() {
@@ -31,17 +37,23 @@ public class Sonar extends SubsystemBase {
         StatusSignal<Distance> distance = canRangeFinder.getDistance();
         Double distanceCentimeters = distance.getValueAsDouble() * conversionFactor;
         // Add the distance to the list if it's valid
-        if (distanceCentimeters != null) {
+        StatusSignal<Boolean> detected = canRangeFinder.getIsDetected();
+        boolean ifDetected = detected.getValue();
+        if (ifDetected) {
             distances.add(distanceCentimeters); // Convert to inches and add to the list
         }
 
+
         // Check if a second has passed
-        if (timer.hasElapsed(1.0)) {
+        if (timer.hasElapsed(0.01)) {
             // Calculate the median
+           
             median = calculateMedian(distances);
+
 
             // Print the median distance
             System.out.println("Median Distance: " + median + " centimeters");
+
 
             // Clear the list and reset the timer
             distances.clear();
@@ -49,9 +61,10 @@ public class Sonar extends SubsystemBase {
         }
     }
 
+
     private double calculateMedian(List<Double> distances) {
         if (distances.isEmpty()) {
-            return 0.0;
+            return 1000000;
         }
         Collections.sort(distances);
         int middle = distances.size() / 2;
@@ -61,13 +74,20 @@ public class Sonar extends SubsystemBase {
             return distances.get(middle);
         }
     }
-    public double getSpeed(double currentSpeed) {
-        double distanceToSpeed = 0.8;
-        if (median < 100) {
-            return median * distanceToSpeed;
+    public double getSpeed(boolean sonarOn) {
+        double distanceToSpeed = 1;
+        if (sonarOn == false) {
+            return 1;
+        }
+        if (median <= 7) {
+            return 0;
+        }
+        else if (median < 400) {
+            distanceToSpeed *= median/500;
+            return distanceToSpeed;
         }
         else {
-            return currentSpeed;
+            return 1;
         }
     }
 }

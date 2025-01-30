@@ -14,7 +14,7 @@ import frc.robot.SwerveUtils;
 // Position imports
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
+// import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,16 +28,19 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.controllers.PPLTVController;
 
+import java.io.IOException;
 // import com.pathplanner.lib.util.ReplanningConfig;
 import java.util.Map;
+
+import org.json.simple.parser.ParseException;
 /* The DriveTrain class handles the drive subsystem of the robot.
  * Configured for REV Robotics Swerve Modules
  * 
  */
 public class DriveTrain extends SubsystemBase {
-//   HolonomicPathFollowerConfig config;
-  // Creates swerve modules
+    // Creates swerve modules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
       DriveConstants.kFrontLeftTurningCanId,
@@ -74,7 +77,9 @@ public class DriveTrain extends SubsystemBase {
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
   //private final int x;
-  
+  private static RobotConfig config;
+  // public static RobotConfig config; 
+  // RobotConfig config;
 
   /* Odemetry tracks the robot pose utilizing the gyro
    * mainly used for field relativity
@@ -92,39 +97,48 @@ public class DriveTrain extends SubsystemBase {
 
   // Creates new Drive Subsystem
   public DriveTrain() {
-    updatePidValues();
-    // Autobuilder initialization
-    RobotConfig config;
+    // All other subsystem initialization
+    // ...
+
+    // Load the RobotConfig from the GUI settings. You should probably
+    // store this in your Constants file
+
+    // RobotConfig config;
+    
     try{
+      // RobotConfig config = new RobotConfig.fromGUISettings();
       config = RobotConfig.fromGUISettings();
       AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+      this::getPose, // Robot pose supplier
+      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+      // new PPLTVController(0.02), // PPLTVController is the built in path following controller for differential drive trains
+      new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
             ),
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+      config, // The robot configuration
+      () -> {
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
+        // var alliance = DriverStation.getAlliance();
+        // if (alliance.isPresent()) {
+        //   return alliance.get() == DriverStation.Alliance.Red;
+        // }
+        return true;
+      },
+      this // Reference to this subsystem to set requirements
     );
     } catch (Exception e) {
       // Handle exception as needed
       e.printStackTrace();
+      throw new RuntimeException("Failed to configure AutoBuilder", e);
     }
 }
+    
 
 public void updatePidValues() {
   double translationP = SmartDashboard.getNumber("Translation P", 5.0);
@@ -137,18 +151,7 @@ public void updatePidValues() {
   // Set new PID constants
   PIDConstants translationPID = new PIDConstants(translationP, translationI, translationD);
   PIDConstants rotationPID = new PIDConstants(rotationP, rotationI, rotationD);
-
-  // Update your PathFollowerConfig with the new constants
-//   config = new HolonomicPathFollowerConfig(
-//     translationPID,
-//     rotationPID,
-//     DriveConstants.kMaxSpeedMetersPerSecond, //max module speed
-//         ModuleConstants.kRadiusFromModule, // drive base radius in meters
-//     new ReplanningConfig() // Default path replanning config
-//   );
-
-    RobotConfig config;
-}
+} 
 
   // Updates odometry periodically
   public void periodic() {
@@ -162,34 +165,34 @@ public void updatePidValues() {
         });
   }
 
-  // Returns estimated robot pose
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
-  }
+//   // Returns estimated robot pose
+   public Pose2d getPose() {
+     return m_odometry.getPoseMeters();
+   }
 
-  public Rotation2d getRotation2d() {
-    return Rotation2d.fromDegrees(getHeading());
-  }
+//   public Rotation2d getRotation2d() {
+//     return Rotation2d.fromDegrees(getHeading());
+//   }
 
-  // Resets odometry to a specific pose
+//   // Resets odometry to a specific pose
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(
-        Rotation2d.fromDegrees(m_navx.getAngle()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-        pose);
-  }
+      m_odometry.resetPosition(
+         Rotation2d.fromDegrees(m_navx.getAngle()),
+         new SwerveModulePosition[] {
+             m_frontLeft.getPosition(),
+             m_frontRight.getPosition(),
+             m_rearLeft.getPosition(),
+             m_rearRight.getPosition()
+         },
+         pose);
+}
 
   /* Drive method for swerve
    * Uses two joysticks
    * 
    * xSpeed         = speed of robot in x direction
    * ySpeed         = speed of robot in y direction
-   * rot            = angular rate of the robot
+   * rot              = angular rate of the robot
    * fieldRelative  = if x and y speeds are relative to the field
    * rateLimit      = enables smoother controlling 
    * 
@@ -295,6 +298,7 @@ public void updatePidValues() {
    * 
    */
   public void setX() {
+    //check
     m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
     m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));

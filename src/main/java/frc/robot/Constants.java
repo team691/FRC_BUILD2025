@@ -39,28 +39,28 @@ public final class Constants {
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-        new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)); //All of these are inside the object :]
+        new Translation2d  (-kWheelBase / 2, -kTrackWidth / 2)); //All of these are inside the object :]
 
     // Angular offset variables (radians)
-    public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
-    public static final double kFrontRightChassisAngularOffset = 0;
-    public static final double kBackLeftChassisAngularOffset = Math.PI / 4;
-    public static final double kBackRightChassisAngularOffset = Math.PI / 2;
+    public static final double kFrontLeftChassisAngularOffset = -Math.PI/2; 
+    public static final double kFrontRightChassisAngularOffset = 0; // 0
+    public static final double kBackLeftChassisAngularOffset = Math.PI; // Math.PI
+    public static final double kBackRightChassisAngularOffset = Math.PI/2; // Math.PI/2
 
     // SPARK MAX motor controller CAN Ids 
     // Driving motors
     public static final int kFrontLeftDrivingCanId = 8;
-    public static final int kRearLeftDrivingCanId = 4;
+    public static final int kRearLeftDrivingCanId = 2;
     public static final int kFrontRightDrivingCanId = 6;
-    public static final int kRearRightDrivingCanId = 2;
+    public static final int kRearRightDrivingCanId = 4;
     // Turning motors
     public static final int kFrontLeftTurningCanId = 7;
-    public static final int kRearLeftTurningCanId = 3;
+    public static final int kRearLeftTurningCanId = 1;
     public static final int kFrontRightTurningCanId = 5;
-    public static final int kRearRightTurningCanId = 1;
+    public static final int kRearRightTurningCanId = 3;
 
     // Is gyro reversed?
-    public static final boolean kGyroReversed = true;
+    public static final boolean kGyroReversed = false;
   }
 
   //
@@ -122,21 +122,6 @@ public final class Constants {
     public static final int kDriverControllerPort2 = 1;
     public static final int kDriverControllerPort3 = 2;
     public static final double kDriveDeadband = 0.2;
-  }
-
-  public static final class ChuckConstants {
-    public static final int id10 = 10;
-    public static final int id11 = 11;
-    public static final int id12 = 12;
-    public static final double speakerspeed = 1.0;
-    public static final double intakespeed = -0.3;
-    public static final double ampspeed = 1.0;
-  }
-
-  public static final class IntakeConstants {
-    public static final int id13 = 13;
-    public static final double RingPick = 0.5;
-    public static final double RingStop = 0;
   }
 
   public static final class LightConstants {
