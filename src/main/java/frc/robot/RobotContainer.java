@@ -171,7 +171,6 @@ public class RobotContainer {
                 () -> m_robotDrive.setX(),
                 m_robotDrive));
 
-
                 // This button for the DRIVER will zero the gyro's angle
         new JoystickButton(m_joystick1, 3)
             .whileTrue(new RunCommand(
