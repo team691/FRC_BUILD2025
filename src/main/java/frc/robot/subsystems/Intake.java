@@ -28,13 +28,13 @@ public class Intake extends SubsystemBase {
     }
 
     // ALL POSITION VALUES TBD
-    public void bigBoiGautham(double position) { // Move Whole intake Mechanism Down: 0, Up: 1
+    public void bigBoiGautham(double position) { // Move Whole intake Mechanism Coral Intake: 0, L1: 0.5, L2 Transfer: 1
         // Set motor to 50% power
         encoderMoveDown.setPosition(position);
     }
 
     // ALL POSITION VALUES TBD
-    public void littleMatthew(double position) { // Move Coral intake Mechanism: Floor: -1, Algae: 0, L2: 1
+    public void littleMatthew(double position) { // Move Flywheel intake Mechanism: Coral Intake: 0, Algae Intake: 0.5, L2 Transfer: 1
         encoderMoveBar.setPosition(position);
     }
 
@@ -54,5 +54,21 @@ public class Intake extends SubsystemBase {
 
     public void algaeOuttake(double speed) { // set speed -1
         motorIntake.set(speed);
+    }
+    public int commandNumber = 1;
+    public void cycleGautham() {
+        if (commandNumber > 3) {
+            commandNumber = 1;
+        }
+        if (commandNumber == 1) {
+            bigBoiGautham(0);
+        }
+        else if (commandNumber == 2) {
+            bigBoiGautham(0.5);
+        }
+        else {
+            bigBoiGautham(1);
+        }
+        commandNumber++;
     }
 }
