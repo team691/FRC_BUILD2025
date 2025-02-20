@@ -1,8 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import java.lang.Thread;
 import com.ctre.phoenix.led.CANdle;
+
 //import com.ctre.phoenix6.*;
 //import com.ctre.phoenix.led.FireAnimation;
 //import frc.robot.Constants.LightConstants;
@@ -17,7 +18,6 @@ public class Lights extends SubsystemBase {
     public void ledRed () {
         candle.setLEDs(255, 0, 0);
       }
-    
     
       public void ledWhite () {
         candle.setLEDs(255, 255, 255);
@@ -45,6 +45,33 @@ public class Lights extends SubsystemBase {
      
       public void ledGreen () {
         candle.setLEDs(0,255,0);
+      }
+
+      int change = 1;
+      public void ledChange() {
+        try {
+          if (change > 3) {
+            // ledGreen();
+            change = 1;
+          }
+          if (change == 1) {
+            ledGreen();
+            Thread.sleep(500);
+          }
+          else if (change == 2) {
+            ledBlue();
+            Thread.sleep(500);
+          }
+          else {
+            ledPurple();
+            Thread.sleep(500);
+          }
+          change++;
+        }
+        catch (Exception e) {
+          System.out.println("oh noo wnot work what will i do rrhahhahsdlfsdjlk");
+        }
+        
       }
 
       /*

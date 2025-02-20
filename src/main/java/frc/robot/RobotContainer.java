@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Sonar;
-//import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Lights;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 // import frc.robot.commands.basicLime;
@@ -61,7 +61,7 @@ public class RobotContainer {
   // The robot's subsystems
   public final DriveTrain m_robotDrive = new DriveTrain();
   //private final Climber m_climber = new Climber();
-  //private final Lights m_lights = new Lights();
+  private final Lights m_lights = new Lights();
   private final Limelight m_lime = new Limelight();
   private final Sonar m_sonar = new Sonar(0);
   private static boolean sonarOn = true;
@@ -181,16 +181,22 @@ public class RobotContainer {
             m_lime
         ));
 
-        new JoystickButton(m_joystick1, 5)
-        .toggleOnTrue(Commands.startEnd(
-            // Start Action: Begin aligning
-            () -> changeSonar(),
-            // End Action: Stop aligning
-            () -> changeSonar(),
-            // Subsystems required by the AutoAlignCommand
-            m_sonar
+        // new JoystickButton(m_joystick1, 5)
+        // .toggleOnTrue(Commands.startEnd(
+        //     // Start Action: Begin aligning
+        //     () -> changeSonar(),
+        //     // End Action: Stop aligning
+        //     () -> changeSonar(),
+        //     // Subsystems required by the AutoAlignCommand
+        //     m_sonar
+        // ));
+        // .debounce(.1)
+
+        new JoystickButton(m_joystick1, 6)
+        .whileTrue(new RunCommand(
+            () -> m_lights.ledChange(),
+            m_lights
         ));
-    
   }
     /* Not sure what this does
     new JoystickButton(m_joystick1, 1)
