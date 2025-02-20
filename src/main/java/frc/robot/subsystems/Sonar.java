@@ -52,7 +52,7 @@ public class Sonar extends SubsystemBase {
 
 
             // Print the median distance
-            System.out.println("Median Distance: " + median + " centimeters");
+            // System.out.println("Median Distance: " + median + " centimeters");
 
 
             // Clear the list and reset the timer

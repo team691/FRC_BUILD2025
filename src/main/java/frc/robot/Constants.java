@@ -31,10 +31,9 @@ public final class Constants {
     // previously 1.8 and 2.0
 
     // Swerve drivetrain physical distances
-    public static final double kTrackWidth = Units.inchesToMeters(24.5);
-    public static final double kWheelBase = Units.inchesToMeters(24.5);
+    public static final double kTrackWidth = Units.inchesToMeters(28);
+    public static final double kWheelBase = Units.inchesToMeters(28);
 
-    // Kinematics variables
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
