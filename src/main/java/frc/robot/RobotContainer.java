@@ -2,28 +2,28 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 // import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import java.util.List;
+// import com.pathplanner.lib.commands.PathPlannerAuto;
+// import java.util.List;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.auto.NamedCommands;
+// import com.pathplanner.lib.commands.PathPlannerAuto;
+// import com.pathplanner.lib.events.EventTrigger;
+// import com.pathplanner.lib.path.GoalEndState;
+// import com.pathplanner.lib.path.PathConstraints;
+// import com.pathplanner.lib.path.PathPlannerPath;
+// import com.pathplanner.lib.path.Waypoint;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.math.geometry.Rotation2d;
+// import edu.wpi.first.math.geometry.Translation2d;
+// import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+// import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+// import edu.wpi.first.wpilibj2.command.button.Trigger;
 // import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.wpilibj.XboxController;
@@ -33,24 +33,24 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveTrain;
 // import frc.robot.subsystems.Level2;
-import frc.robot.subsystems.LevelOne;
-import frc.robot.subsystems.Sonar;
+// import frc.robot.subsystems.LevelOne;
+// import frc.robot.subsystems.Sonar;
 //import frc.robot.subsystems.Lights;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+// import edu.wpi.first.wpilibj2.command.Command;
+// import edu.wpi.first.wpilibj2.command.Commands;
 // import frc.robot.commands.basicLime;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.PathPlannerPath;
+// import com.pathplanner.lib.events.EventTrigger;
+// import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+// import edu.wpi.first.wpilibj2.command.Subsystem;
+// import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Limelight;
 import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.BeamBreakers;
 // import frc.robot.subsystems.Sonar;
 import frc.robot.subsystems.Climber;
@@ -70,7 +70,7 @@ public class RobotContainer {
     //private final Lights m_lights = new Lights();
     private final Limelight m_lime = new Limelight();
     private final Climber m_climber = new Climber();
-    private final Sonar m_sonar = new Sonar(0);
+    // private final Sonar m_sonar = new Sonar(0);
     private static boolean sonarOn = true;
     public final BeamBreakers m_beam = new BeamBreakers();
     // public final Algae m_algae = new Algae();
@@ -173,7 +173,7 @@ public class RobotContainer {
                 () -> m_robotDrive.setX(),
                 m_robotDrive));
 
-                // This button for the DRIVER will zero the gyro's angle
+        // This button for the DRIVER will zero the gyro's angle
         new JoystickButton(m_joystick1, 12)
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.zeroHeading(),
@@ -198,17 +198,6 @@ public class RobotContainer {
             .whileTrue(new RunCommand(
                 () -> m_climber.setPower(-0.7),    
                 m_climber));
-
-        // new JoystickButton(m_joystick2, 2)
-        //     .whileTrue(new RunCommand(
-        //         () -> 
-        //     ), []);
-        
-        // new JoystickButton(m_joystick1, 6)
-        //     .whileTrue(new RunCommand(
-        //         () -> m_intake.littleMatthew(0.5), // Move whole intake mechanism down
-        //         () -> m_intake.coralIntake(1),
-        //         m_robotDrive));
     
           // Light function for OPERATOR lights amp motor
   
