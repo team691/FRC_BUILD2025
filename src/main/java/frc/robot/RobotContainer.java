@@ -172,7 +172,7 @@ public class RobotContainer {
                 m_robotDrive));
 
                 // This button for the DRIVER will zero the gyro's angle
-        new JoystickButton(m_joystick1, 3)
+        new JoystickButton(m_joystick1, 12)
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
@@ -186,6 +186,22 @@ public class RobotContainer {
             .whileTrue(new RunCommand(
                 () -> m_intake.bigBoiGautham(0), // Move whole intake mechanism down
                 m_robotDrive));
+
+        // littleMatthew
+        new JoystickButton(m_joystick1, 3)
+            .whileTrue(new RunCommand(
+                () -> m_intake.littleMatthew(0), // Move whole intake mechanism down
+                m_robotDrive));
+
+        new JoystickButton(m_joystick2, 3)
+            .whileTrue(new RunCommand(
+                () -> m_level2.intake(0.7),    
+                m_level2));
+
+        new JoystickButton(m_joystick2, 4)
+            .whileTrue(new RunCommand(
+                () -> m_level2.outtakeL2(0.7),    
+                 m_level2));
 
         // new JoystickButton(m_joystick2, 2)
         //     .whileTrue(new RunCommand(

@@ -18,6 +18,6 @@ public class Level2 extends SubsystemBase {
     }
 
     public void outtakeL2(double speed) { // set speed -1
-        motorIntake.set(speed);
+        motorIntake.set(-speed);
     }
 }

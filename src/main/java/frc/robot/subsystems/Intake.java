@@ -38,7 +38,6 @@ public class Intake extends SubsystemBase {
         encoderMoveBar.setPosition(position);
     }
 
-
     public void intake(double speed) { // set speed 1
         // Stop the motor when the robot is disabled
         motorIntake.set(speed);
