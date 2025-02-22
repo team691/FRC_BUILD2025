@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj.Joystick;
 //import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Level2;
+// import frc.robot.subsystems.Level2;
 import frc.robot.subsystems.LevelOne;
 import frc.robot.subsystems.Sonar;
 //import frc.robot.subsystems.Lights;
@@ -53,6 +53,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.BeamBreakers;
 // import frc.robot.subsystems.Sonar;
+import frc.robot.subsystems.Climber;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -68,6 +69,7 @@ public class RobotContainer {
     //private final Climber m_climber = new Climber();
     //private final Lights m_lights = new Lights();
     private final Limelight m_lime = new Limelight();
+    private final Climber m_climber = new Climber();
     private final Sonar m_sonar = new Sonar(0);
     private static boolean sonarOn = true;
     public final BeamBreakers m_beam = new BeamBreakers();
@@ -75,7 +77,7 @@ public class RobotContainer {
     private final Intake m_intake = new Intake();
     // private final FourBar m_fourbar = new FourBar(0, 0, 5);
     // private final LevelOne m_levelone = new LevelOne();
-    private final Level2 m_level2 = new Level2();
+    // private final Level2 m_level2 = new Level2();
     
       // The driver's controller
       Joystick m_joystick1 = new Joystick(OIConstants.kDriverControllerPort);
@@ -128,7 +130,7 @@ public class RobotContainer {
       SmartDashboard.putData("Auto Chooser", m_chooser);
       // Configure the button bindings
       configureButtonBindings();
-      // new EventTrigger("Example Marker").onTrue(Commands.print("Passed an event marker"));
+    //   new EventTrigger("L2").and(new Trigger(m_level2::intake)).onTrue(Commands.print("shoot note"));
      // Add PathPlanner autonomous
      
      // SmartDashboard.putData("Auto Chooser", m_chooser);
@@ -179,29 +181,23 @@ public class RobotContainer {
 
         new JoystickButton(m_joystick1, 4)
             .whileTrue(new RunCommand(
-                () -> m_intake.bigBoiGautham(1), // Move whole intake mechanism up
+                () -> m_intake.intake(0.6), // Move whole intake mechanism up
                 m_robotDrive));
         
         new JoystickButton(m_joystick1, 6)
             .whileTrue(new RunCommand(
-                () -> m_intake.bigBoiGautham(0), // Move whole intake mechanism down
+                () -> m_intake.outtake(-0.5), // Move whole intake mechanism down
                 m_robotDrive));
 
-        // littleMatthew
         new JoystickButton(m_joystick1, 3)
             .whileTrue(new RunCommand(
-                () -> m_intake.littleMatthew(0), // Move whole intake mechanism down
-                m_robotDrive));
+                () -> m_climber.setPower(0.7),
+                 m_climber));
 
-        new JoystickButton(m_joystick2, 3)
+        new JoystickButton(m_joystick1, 5)
             .whileTrue(new RunCommand(
-                () -> m_level2.intake(0.7),    
-                m_level2));
-
-        new JoystickButton(m_joystick2, 4)
-            .whileTrue(new RunCommand(
-                () -> m_level2.outtakeL2(0.7),    
-                 m_level2));
+                () -> m_climber.setPower(-0.7),    
+                m_climber));
 
         // new JoystickButton(m_joystick2, 2)
         //     .whileTrue(new RunCommand(
@@ -216,16 +212,16 @@ public class RobotContainer {
     
           // Light function for OPERATOR lights amp motor
   
-        //   new JoystickButton(m_joystick1, 6)
-        //   .toggleOnTrue(Commands.startEnd(
-        //       // Start Action: Begin aligning
-        //       () -> new AutoAlign(m_robotDrive, m_lime).schedule(),
-        //       // End Action: Stop aligning
-        //       () -> new AutoAlign(m_robotDrive, m_lime).cancel(),
-        //       // Subsystems required by the AutoAlignCommand
-        //       m_robotDrive,
-        //       m_lime
-        //   ));
+        new JoystickButton(m_joystick2, 5)
+            .toggleOnTrue(Commands.startEnd(
+              // Start Action: Begin aligning
+                () -> new AutoAlign(m_robotDrive, m_lime).schedule(),
+              // End Action: Stop aligning
+                () -> new AutoAlign(m_robotDrive, m_lime).cancel(),
+              // Subsystems required by the AutoAlignCommand
+                m_robotDrive,
+                m_lime
+          ));
   
         //   new JoystickButton(m_joystick1, 5)
         //   .toggleOnTrue(Commands.startEnd(
