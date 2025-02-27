@@ -22,7 +22,6 @@ public class Sonar extends SubsystemBase {
     private final Timer timer;
     private double median;
 
-
     public Sonar(int deviceID) {
         canRangeFinder = new CANrange(deviceID);
         distances = new ArrayList<>();

@@ -142,8 +142,8 @@ public class RobotContainer {
                 // get z is between 1 and -1 spin right is 1
                 //max speed value robot can be set to drive is 3, scaling speed is capped around 3
                 
-                ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() , //m_operator.getRawAxis(3)
-                ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() , // * m_sonar.getSpeed(sonarOn)
+                ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() * m_sonar.getSpeed(true), //m_operator.getRawAxis(3)
+                ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() * m_sonar.getSpeed(true), // * m_sonar.getSpeed(sonarOn)
                 (-MathUtil.applyDeadband(m_joystick2.getZ(), OIConstants.kDriveDeadband)) * 3.5,
                 true, true),
             m_robotDrive));
@@ -213,7 +213,7 @@ public class RobotContainer {
             return 2.0;
         }
         else {
-            return 9.0;
+            return 5.0;
         }
     }
 
