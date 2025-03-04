@@ -226,7 +226,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     //candle.setLEDs(0, 255, 0);
     m_robotContainer.teleopPeriodic();
-    System.out.println(m_robotContainer.m_beam.checkBeam());
+    // System.out.println(m_robotContainer.m_beam.checkBeam());
+    System.out.println(m_robotContainer.m_robotDrive.getHeading());
   }
 
   @Override

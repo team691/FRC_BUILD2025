@@ -87,7 +87,7 @@ public class DriveTrain extends SubsystemBase {
    */
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      Rotation2d.fromDegrees(m_navx.getAngle()),
+      Rotation2d.fromDegrees(-m_navx.getAngle()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -115,9 +115,13 @@ public class DriveTrain extends SubsystemBase {
       (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
       // new PPLTVController(0.02), // PPLTVController is the built in path following controller for differential drive trains
       new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.3, 0.0, 0.0), // Translation PID constants P between 5 and 6
-                    new PIDConstants(0.35, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(4.5, 0.0, 0.2,  0.0), // Translation PID constants P between 5 and 6
+                    new PIDConstants(2.5, 0.0, 0.3, 0.0) // Rotation PID constants
             ),
+      // new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+      //               new PIDConstants(0.0, 0.0, 0.5, 0.0), // Translation PID constants P between 5 and 6
+      //               new PIDConstants(0, 0.0, 0.5, 0) // Rotation PID constants
+      //       ),
       config, // The robot configuration
       () -> {
         // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -140,31 +144,16 @@ public class DriveTrain extends SubsystemBase {
 }
     
 
-public void updatePidValues() {
-  // double translationP = SmartDashboard.getNumber("Translation P", 5.0);
-  // double translationI = SmartDashboard.getNumber("Translation I", 0.0);
-  // double translationD = SmartDashboard.getNumber("Translation D", 0.0);
-  // double rotationP = SmartDashboard.getNumber("Rotation P", 5.0);
-  // double rotationI = SmartDashboard.getNumber("Rotation I", 0.0);
-  // double rotationD = SmartDashboard.getNumber("Rotation D", 0.0);
-  
-  // // Set new PID constants
-  // PIDConstants translationPID = new PIDConstants(translationP, translationI, translationD);
-  // PIDConstants rotationPID = new PIDConstants(rotationP, rotationI, rotationD);
-  
-} 
-
   // Updates odometry periodically
   public void periodic() {
     m_odometry.update(
-        Rotation2d.fromDegrees(m_navx.getAngle()),
+        Rotation2d.fromDegrees(-m_navx.getAngle()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-      updatePidValues();
   }
 
 //   // Returns estimated robot pose

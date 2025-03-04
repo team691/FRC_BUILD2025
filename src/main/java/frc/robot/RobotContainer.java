@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 // import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-// import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 // import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.wpilibj.XboxController;
@@ -39,7 +39,7 @@ import frc.robot.subsystems.DriveTrain;
 // import edu.wpi.first.wpilibj2.command.Command;
 // import edu.wpi.first.wpilibj2.command.Commands;
 // import frc.robot.commands.basicLime;
-// import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.events.EventTrigger;
 // import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 // import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -51,7 +51,7 @@ import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Intake;
 // import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.BeamBreakers;
+// import frc.robot.subsystems.BeamBreakers;
 // import frc.robot.subsystems.Sonar;
 import frc.robot.subsystems.Climber;
 
@@ -69,15 +69,16 @@ public class RobotContainer {
     //private final Climber m_climber = new Climber();
     //private final Lights m_lights = new Lights();
     private final Limelight m_lime = new Limelight();
-    private final Climber m_climber = new Climber();
+    // private final Climber m_climber = new Climber();
     // private final Sonar m_sonar = new Sonar(0);
     private static boolean sonarOn = true;
-    public final BeamBreakers m_beam = new BeamBreakers();
-    // public final Algae m_algae = new Algae();
-    private final Intake m_intake = new Intake();
+    // public final BeamBreakers m_beam = new BeamBreakers();
+    // // public final Algae m_algae = new Algae();
+    // private final Intake m_intake = new Intake();
     // private final FourBar m_fourbar = new FourBar(0, 0, 5);
     // private final LevelOne m_levelone = new LevelOne();
     // private final Level2 m_level2 = new Level2();
+    private final AutoAlign m_align = new AutoAlign(m_robotDrive, m_lime);
     
       // The driver's controller
       Joystick m_joystick1 = new Joystick(OIConstants.kDriverControllerPort);
@@ -132,15 +133,8 @@ public class RobotContainer {
       configureButtonBindings();
     //   new EventTrigger("L2").and(new Trigger(m_level2::intake)).onTrue(Commands.print("shoot note"));
      // Add PathPlanner autonomous
-     
-     // SmartDashboard.putData("Auto Chooser", m_chooser);
-      SmartDashboard.putNumber("Translation P", 0.0);
-      SmartDashboard.putNumber("Translation I", 0.0);
-      SmartDashboard.putNumber("Translation D", 0.0);
-      SmartDashboard.putNumber("Rotation P", 0.0);
-      SmartDashboard.putNumber("Rotation I", 0.0);
-      // m_chooser.addOption("Example Auto", getAutonomousCommand());
-      SmartDashboard.putNumber("Rotation D", 0.0);
+     new EventTrigger("align").and(new Trigger(m_align::execute)).onTrue(Commands.print("auto align"));
+    
       
       // Ignore controller warnings
       DriverStation.silenceJoystickConnectionWarning(true);
@@ -179,38 +173,38 @@ public class RobotContainer {
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
 
-        new JoystickButton(m_joystick1, 4)
-            .whileTrue(new RunCommand(
-                () -> m_intake.intake(0.6), // Move whole intake mechanism up
-                m_robotDrive));
+        // new JoystickButton(m_joystick1, 4)
+        //     .whileTrue(new RunCommand(
+        //         () -> m_intake.intake(0.6), // Move whole intake mechanism up
+        //         m_robotDrive));
         
-        new JoystickButton(m_joystick1, 6)
-            .whileTrue(new RunCommand(
-                () -> m_intake.outtake(-0.5), // Move whole intake mechanism down
-                m_robotDrive));
+        // new JoystickButton(m_joystick1, 6)
+        //     .whileTrue(new RunCommand(
+        //         () -> m_intake.outtake(-0.5), // Move whole intake mechanism down
+        //         m_robotDrive));
 
-        new JoystickButton(m_joystick1, 3)
-            .whileTrue(new RunCommand(
-                () -> m_climber.setPower(0.7),
-                 m_climber));
+        // new JoystickButton(m_joystick1, 3)
+        //     .whileTrue(new RunCommand(
+        //         () -> m_climber.setPower(0.7),
+        //          m_climber));
 
-        new JoystickButton(m_joystick1, 5)
-            .whileTrue(new RunCommand(
-                () -> m_climber.setPower(-0.7),    
-                m_climber));
+        // new JoystickButton(m_joystick1, 5)
+        //     .whileTrue(new RunCommand(
+        //         () -> m_climber.setPower(-0.7),    
+        //         m_climber));
     
           // Light function for OPERATOR lights amp motor
   
-        new JoystickButton(m_joystick2, 5)
-            .toggleOnTrue(Commands.startEnd(
-              // Start Action: Begin aligning
-                () -> new AutoAlign(m_robotDrive, m_lime).schedule(),
-              // End Action: Stop aligning
-                () -> new AutoAlign(m_robotDrive, m_lime).cancel(),
-              // Subsystems required by the AutoAlignCommand
-                m_robotDrive,
-                m_lime
-          ));
+        // new JoystickButton(m_joystick2, 5)
+        //     .toggleOnTrue(Commands.startEnd(
+        //       // Start Action: Begin aligning
+        //         () -> new AutoAlign(m_robotDrive, m_lime).schedule(),
+        //       // End Action: Stop aligning
+        //         () -> new AutoAlign(m_robotDrive, m_lime).cancel(),
+        //       // Subsystems required by the AutoAlignCommand
+        //         m_robotDrive,
+        //         m_lime
+        //   ));
   
         //   new JoystickButton(m_joystick1, 5)
         //   .toggleOnTrue(Commands.startEnd(
@@ -283,15 +277,15 @@ public class RobotContainer {
     //SPEED CMD
     public double setSpeed() {
         if (m_joystick1.getRawButton(1) == true) {
-            return 2.0;
+            return 9.0; // 9.0
         }
         else {
-            return 9.0;
+            return 2.0; // 2.0
         }
     }
 
     public void teleopPeriodic(){
-        m_robotDrive.updatePidValues();
+        // m_robotDrive.updatePidValues();
     }
 /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
