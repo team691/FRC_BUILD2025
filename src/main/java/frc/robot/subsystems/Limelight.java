@@ -1,122 +1,75 @@
 // package frc.robot.subsystems;
+
+
 // import edu.wpi.first.networktables.NetworkTable;
-// import edu.wpi.first.networktables.NetworkTableEntry;
 // import edu.wpi.first.networktables.NetworkTableInstance;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
 // public class Limelight extends SubsystemBase {
+//     private final NetworkTable tableInstance = NetworkTableInstance.getDefault().getTable("limelight");
 
-//     // Initialize a Network Table Instance
-//     private NetworkTable tableInstance = NetworkTableInstance.getDefault()
-//     .getTable("limelight");
 
-//     // Limelight target boolean
-//     public boolean vTar = false;
-
-//     // Send the data to SmartDashboard
-//     public static final boolean postSmartDashboard = true;
-
-//     // Verify connection to SmartDashboard
-//     public static boolean isConnected(boolean connected) {
-//         if (postSmartDashboard) {
-//             SmartDashboard.putBoolean("Limelight Connected", true);
-//         }
-//         return connected;
+//     // Fetch the horizontal offset ("tx") from the target
+//     public double getYawError() {
+//         return tableInstance.getEntry("tx").getDouble(0.0); // tx is the horizontal offset
 //     }
 
-//     // Position values for Network Tables based off pipeline
 
-//     public double PosX() {
-//         return tableInstance.getEntry("tx").getDouble(0.0);
-//     }
-
-//     public double PosY() {
-//         return tableInstance.getEntry("ty").getDouble(0.0);
-//     }
-
-//     public double PosArea() {
-//         return tableInstance.getEntry("ta").getDouble(0.0);
-//     }
-
-//     public double PosSkew() {
-//         return tableInstance.getEntry("ts").getDouble(0.0);
-//     }
-
-//     public double PosHor() {
-//         return tableInstance.getEntry("thor").getDouble(0.0);
-//     }
-
-//     public double PosVert() {
-//         return tableInstance.getEntry("tvert").getDouble(0.0);
-//     }
-
-//     public double tagId() {
-//         return tableInstance.getEntry("tid").getDouble(0.0);
-//     }
-
-//     public enum LEDMode {
-//         // follow pipeline mode
-//         PIPELINE(0),
-//         // force LEDs off
-//         FORCE_OFF(1),
-//         // force LEDs to blink
-//         FORCE_BLINK(2),
-//         // force LEDs on
-//         FORCE_ON(3);
-    
-//         LEDMode(int value) {
-//             this.val = value;
-//         }
-        
-//         public int getCodeValue() {
-//             return val;
-//         }
-
-//         private int val;
-//     }    
-    
-//     // Initialize instance of LED modes in Network Tables
-//     NetworkTableEntry LEDModeEntry = tableInstance.getEntry("ledMode");
-    
-//     // LED Mode
-//     public final void setLEDMode(LEDMode mode) 
-//     {
-//         LEDModeEntry.setNumber(mode.getCodeValue());
-//     }
-
-//     public void validTarget(double id) {
-//         if (tagId() == id)
-//         {
-//             vTar = true;
-//         }
-//         else
-//         {
-//             vTar = false;
-//         }
+//     // Check if the target is valid
+//     public boolean hasValidTarget() {
+//         return tableInstance.getEntry("tv").getDouble(0.0) == 1.0; // tv is 1.0 if a target is detected
 //     }
 // }
 
 package frc.robot.subsystems;
 
-
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-
 public class Limelight extends SubsystemBase {
-    private final NetworkTable tableInstance = NetworkTableInstance.getDefault().getTable("limelight");
+    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
+    // Cached NetworkTable entries
+    private final NetworkTableEntry tx = table.getEntry("tx"); // Horizontal offset
+    private final NetworkTableEntry ty = table.getEntry("ty"); // Vertical offset
+    private final NetworkTableEntry ta = table.getEntry("ta"); // Target area
+    private final NetworkTableEntry tv = table.getEntry("tv"); // Valid target indicator
 
     // Fetch the horizontal offset ("tx") from the target
     public double getYawError() {
-        return tableInstance.getEntry("tx").getDouble(0.0); // tx is the horizontal offset
+        return tx.getDouble(0.0); // Default to 0.0 if no data
     }
 
+    // Fetch vertical offset ("ty") for distance estimation
+    public double getVerticalOffset() {
+        return ty.getDouble(0.0);
+    }
+
+    // Fetch target area ("ta"), which can be used for distance estimation
+    public double getTargetArea() {
+        return ta.getDouble(0.0);
+    }
 
     // Check if the target is valid
     public boolean hasValidTarget() {
-        return tableInstance.getEntry("tv").getDouble(0.0) == 1.0; // tv is 1.0 if a target is detected
+        return tv.getDouble(0.0) == 1.0;
     }
+
+    // Optional: Estimate distance using ty (requires Limelight mounting angle & height)
+    public double estimateDistance(double limelightHeight, double targetHeight, double limelightAngle) {
+        if (!hasValidTarget()) return -1.0; // Return -1 if no valid target
+        
+        double angleToTarget = Math.toRadians(limelightAngle + getVerticalOffset());
+        return (targetHeight - limelightHeight) / Math.tan(angleToTarget);
+    }
+
+    public double getDistance() {
+        Rotation2d angleToGoal = Rotation2d.fromDegrees(LIMELIGHT_MOUNT_ANGLE)
+            .plus(Rotation2d.fromDegrees(getYawError())); // Using yaw error for better alignment
+        
+        return (TARGET_HEIGHT - LIMELIGHT_HEIGHT) / angleToGoal.getTan(); // Distance estimation
+    }    
 }
