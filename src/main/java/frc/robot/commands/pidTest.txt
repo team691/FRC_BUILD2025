@@ -1,0 +1,56 @@
+package frc.robot.commands;
+
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Limelight;
+
+public class AutoAlign extends Command {
+    private final DriveTrain driveTrain;
+    private final Limelight limelight;
+
+    // PID Controllers
+    private final PPHolonomicDriveController yawPID = new PIDController(0.03, 0.0, 0.002); // Tune these values!
+    private final PPHolonomicDriveController distancePID = new PIDController(0.1, 0.0, 0.01); // Tune these values!
+
+    private final double TARGET_DISTANCE = 1.5; // Distance in meters to stop at
+
+    public AutoAlign(DriveTrain driveTrain, Limelight limelight) {
+        this.driveTrain = driveTrain;
+        this.limelight = limelight;
+        addRequirements(driveTrain);
+        
+        // Set tolerances for finishing
+        yawPID.setTolerance(1.0); // Within 1 degree
+        distancePID.setTolerance(0.1); // Within 10 cm
+    }
+
+    @Override
+    public void execute() {
+        if (limelight.hasValidTarget()) {
+            double yawError = limelight.getYawError();
+            double distance = limelight.getDistance();
+            
+            double rotationSpeed = yawPID.calculate(yawError, 0); // Target yaw = 0
+            double forwardSpeed = distancePID.calculate(distance, TARGET_DISTANCE); // Stop at TARGET_DISTANCE
+            
+            // Clamp speeds to safe values
+            rotationSpeed = Math.max(-0.5, Math.min(0.5, rotationSpeed));
+            forwardSpeed = Math.max(-0.5, Math.min(0.5, forwardSpeed));
+
+            driveTrain.drive(forwardSpeed, 0.0, rotationSpeed, true, false);
+        } else {
+            driveTrain.drive(0.0, 0.0, 0.0, true, false); // Stop if no target
+        }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        driveTrain.drive(0.0, 0.0, 0.0, true, false); // Stop when done
+    }
+
+    @Override
+    public boolean isFinished() {
+        return yawPID.atSetpoint() && distancePID.atSetpoint(); // Stop when aligned & at correct distance
+    }
+}
