@@ -10,7 +10,7 @@ public class Climber extends SubsystemBase {
     public Climber() {
         // instantiate said variables
         // SET DEVICE ID TO PROPER ID ONCE SUBSYSTEM IS MADE
-        Climb = new SparkMax(0, MotorType.kBrushless);
+        Climb = new SparkMax(11, MotorType.kBrushless);
     }
 
     public void setPower(double speed) {

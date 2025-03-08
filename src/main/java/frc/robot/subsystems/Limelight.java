@@ -24,6 +24,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -67,9 +68,9 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getDistance() {
-        Rotation2d angleToGoal = Rotation2d.fromDegrees(LIMELIGHT_MOUNT_ANGLE)
+        Rotation2d angleToGoal = Rotation2d.fromDegrees(0) // change
             .plus(Rotation2d.fromDegrees(getYawError())); // Using yaw error for better alignment
         
-        return (TARGET_HEIGHT - LIMELIGHT_HEIGHT) / angleToGoal.getTan(); // Distance estimation
+        return (35.56 - 19.685) / angleToGoal.getTan(); // Distance estimation
     }    
 }

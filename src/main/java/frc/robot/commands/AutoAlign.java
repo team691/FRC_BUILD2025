@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 
-public class AutoAlign extends SubsystemBase {
+public class AutoAlign extends Command {
     private final DriveTrain driveTrain;
     private final Limelight limelight;
 
@@ -51,7 +51,7 @@ public class AutoAlign extends SubsystemBase {
             double distance = limelight.getDistance();
             
             double rotationSpeed = -yawError * yawKp; 
-            double forwardSpeed = (distance - TARGET_DISTANCE) * forwardKp;
+            double forwardSpeed = (distance - limelight.getDistance()) * forwardKp;
             
             rotationSpeed = Math.max(-0.5, Math.min(0.5, rotationSpeed));
             forwardSpeed = Math.max(-0.5, Math.min(0.5, forwardSpeed));
@@ -73,7 +73,7 @@ public class AutoAlign extends SubsystemBase {
     // @Override
     public boolean isFinished() {
         // Always return false since this command is toggled manually
-        return false;
+        // return false;
         return Math.abs(limelight.getYawError()) < yawTolerance && limelight.getTargetArea() >= targetAreaThreshold;
     }
 }

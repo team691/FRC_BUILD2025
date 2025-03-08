@@ -66,7 +66,7 @@ import frc.robot.subsystems.Climber;
 public class RobotContainer {
   // The robot's subsystems
     public final DriveTrain m_robotDrive = new DriveTrain();
-    //private final Climber m_climber = new Climber();
+    private final Climber m_climber = new Climber();
     //private final Lights m_lights = new Lights();
     private final Limelight m_lime = new Limelight();
     // private final Climber m_climber = new Climber();
@@ -133,7 +133,7 @@ public class RobotContainer {
       configureButtonBindings();
     //   new EventTrigger("L2").and(new Trigger(m_level2::intake)).onTrue(Commands.print("shoot note"));
      // Add PathPlanner autonomous
-     new EventTrigger("align").and(new Trigger(m_align::execute)).onTrue(Commands.print("auto align"));
+    //  new EventTrigger("align").and(new Trigger(m_align::execute)).onTrue(Commands.print("auto align"));
     
       
       // Ignore controller warnings
@@ -172,6 +172,11 @@ public class RobotContainer {
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
+
+        new JoystickButton(m_joystick1, 3)
+          .whileTrue(new RunCommand(
+            () -> m_climber.setPower(0.5),
+            m_climber));
 
         // new JoystickButton(m_joystick1, 4)
         //     .whileTrue(new RunCommand(
