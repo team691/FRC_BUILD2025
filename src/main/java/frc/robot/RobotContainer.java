@@ -74,7 +74,7 @@ public class RobotContainer {
     private static boolean sonarOn = true;
     // public final BeamBreakers m_beam = new BeamBreakers();
     // // public final Algae m_algae = new Algae();
-    // private final Intake m_intake = new Intake();
+    private final Intake m_intake = new Intake();
     // private final FourBar m_fourbar = new FourBar(0, 0, 5);
     // private final LevelOne m_levelone = new LevelOne();
     // private final Level2 m_level2 = new Level2();
@@ -175,8 +175,26 @@ public class RobotContainer {
 
         new JoystickButton(m_joystick1, 3)
           .whileTrue(new RunCommand(
-            () -> m_climber.setPower(0.5),
+            () -> m_climber.climb(),
+            m_climber)).whileFalse(new RunCommand(() -> m_climber.stop(),m_climber));
+
+        new JoystickButton(m_joystick1, 4)
+          .whileTrue(new RunCommand(
+            () -> m_climber.lower(),
             m_climber));
+
+        new JoystickButton(m_joystick1, 5)
+          .whileTrue(new RunCommand(
+            () -> m_intake.intake(),
+            m_intake));
+
+        new JoystickButton(m_joystick1, 6)
+          .whileTrue(new RunCommand(
+            () -> m_intake.shoot(),
+            m_intake));
+
+
+
 
         // new JoystickButton(m_joystick1, 4)
         //     .whileTrue(new RunCommand(
@@ -200,16 +218,16 @@ public class RobotContainer {
     
           // Light function for OPERATOR lights amp motor
   
-        // new JoystickButton(m_joystick2, 5)
-        //     .toggleOnTrue(Commands.startEnd(
-        //       // Start Action: Begin aligning
-        //         () -> new AutoAlign(m_robotDrive, m_lime).schedule(),
-        //       // End Action: Stop aligning
-        //         () -> new AutoAlign(m_robotDrive, m_lime).cancel(),
-        //       // Subsystems required by the AutoAlignCommand
-        //         m_robotDrive,
-        //         m_lime
-        //   ));
+        new JoystickButton(m_joystick2, 5)
+            .toggleOnTrue(Commands.startEnd(
+              // Start Action: Begin aligning
+                () -> new AutoAlign(m_robotDrive, m_lime).schedule(),
+              // End Action: Stop aligning
+                () -> new AutoAlign(m_robotDrive, m_lime).cancel(),
+              // Subsystems required by the AutoAlignCommand
+                m_robotDrive,
+                m_lime
+          ));
   
         //   new JoystickButton(m_joystick1, 5)
         //   .toggleOnTrue(Commands.startEnd(
