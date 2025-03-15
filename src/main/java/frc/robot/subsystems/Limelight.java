@@ -1,4 +1,4 @@
-// package frc.robot.subsystems;
+package frc.robot.subsystems;
 
 
 // import edu.wpi.first.networktables.NetworkTable;
@@ -22,55 +22,46 @@
 //     }
 // }
 
-package frc.robot.subsystems;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
-    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-
-    // Cached NetworkTable entries
-    private final NetworkTableEntry tx = table.getEntry("tx"); // Horizontal offset
-    private final NetworkTableEntry ty = table.getEntry("ty"); // Vertical offset
-    private final NetworkTableEntry ta = table.getEntry("ta"); // Target area
-    private final NetworkTableEntry tv = table.getEntry("tv"); // Valid target indicator
+    private final NetworkTable tableInstance = NetworkTableInstance.getDefault().getTable("limelight");
+    
 
     // Fetch the horizontal offset ("tx") from the target
     public double getYawError() {
-        return tx.getDouble(0.0); // Default to 0.0 if no data
+        return tableInstance.getEntry("tx").getDouble(0.0); // tx is the horizontal offset
     }
 
-    // Fetch vertical offset ("ty") for distance estimation
-    public double getVerticalOffset() {
-        return ty.getDouble(0.0);
+
+    // Fetch the forward/backward distance to the target using botpose
+    public double getForwardDistance() {
+        double[] botPose = LimelightHelpers.getBotPose_wpiRed("limelight");//tableInstance.getEntry("botpose").getDoubleArray(new double[6]);
+        
+        System.out.println(botPose.length);
+
+        return (botPose.length >= 3) ? botPose[1] : 0.0; // botPose[1] is Y distance (forward/back)
     }
 
-    // Fetch target area ("ta"), which can be used for distance estimation
-    public double getTargetArea() {
-        return ta.getDouble(0.0);
+
+    // Fetch the left/right strafe distance (if needed)
+    public double getStrafeDistance() {
+        double[] botPose = tableInstance.getEntry("botpose").getDoubleArray(new double[6]);
+        return (botPose.length >= 3) ? botPose[0] : 0.0; // botPose[0] is X distance (left/right)
     }
+
+
+    // Fetch yaw rotation relative to tag (for fine alignment)
+    public double getRobotYaw() {
+        double[] botPose = tableInstance.getEntry("botpose").getDoubleArray(new double[6]);
+        return (botPose.length >= 6) ? botPose[5] : 0.0; // botPose[5] is yaw rotation
+    }
+
 
     // Check if the target is valid
     public boolean hasValidTarget() {
-        return tv.getDouble(0.0) == 1.0;
+        return tableInstance.getEntry("tv").getDouble(0.0) == 1.0; // tv is 1.0 if a target is detected
     }
-
-    // Optional: Estimate distance using ty (requires Limelight mounting angle & height)
-    public double estimateDistance(double limelightHeight, double targetHeight, double limelightAngle) {
-        if (!hasValidTarget()) return -1.0; // Return -1 if no valid target
-        
-        double angleToTarget = Math.toRadians(limelightAngle + getVerticalOffset());
-        return (targetHeight - limelightHeight) / Math.tan(angleToTarget);
-    }
-
-    public double getDistance() {
-        Rotation2d angleToGoal = Rotation2d.fromDegrees(0) // change
-            .plus(Rotation2d.fromDegrees(getYawError())); // Using yaw error for better alignment
-        
-        return (35.56 - 19.685) / angleToGoal.getTan(); // Distance estimation
-    }    
 }

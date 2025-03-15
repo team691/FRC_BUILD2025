@@ -48,7 +48,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Limelight;
 import frc.robot.commands.AutoAlign;
-import frc.robot.subsystems.Intake;
 // import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import frc.robot.subsystems.BeamBreakers;
@@ -69,28 +68,23 @@ public class RobotContainer {
     private final Climber m_climber = new Climber();
     //private final Lights m_lights = new Lights();
     private final Limelight m_lime = new Limelight();
-    // private final Climber m_climber = new Climber();
-    // private final Sonar m_sonar = new Sonar(0);
     private static boolean sonarOn = true;
     // public final BeamBreakers m_beam = new BeamBreakers();
-    // // public final Algae m_algae = new Algae();
-    private final Intake m_intake = new Intake();
-    // private final FourBar m_fourbar = new FourBar(0, 0, 5);
     // private final LevelOne m_levelone = new LevelOne();
-    // private final Level2 m_level2 = new Level2();
+
     private final AutoAlign m_align = new AutoAlign(m_robotDrive, m_lime);
     
-      // The driver's controller
-      Joystick m_joystick1 = new Joystick(OIConstants.kDriverControllerPort);
-      Joystick m_joystick2 = new Joystick(OIConstants.kDriverControllerPort2);
-      //XboxController m_operator = new XboxController(OIConstants.kDriverControllerPort3);
-      public static void changeSonar() {
-          if (sonarOn == true) {
-              sonarOn = false;
-          }
-          else {
-              sonarOn = true;
-          }
+    // The driver's controller
+    Joystick m_joystick1 = new Joystick(OIConstants.kDriverControllerPort);
+    Joystick m_joystick2 = new Joystick(OIConstants.kDriverControllerPort2);
+    //XboxController m_operator = new XboxController(OIConstants.kDriverControllerPort3);
+    public static void changeSonar() {
+        if (sonarOn == true) {
+            sonarOn = false;
+        }
+        else {
+            sonarOn = true;
+        }
     }
     
     // Initialize Sendable Chooser
@@ -99,23 +93,23 @@ public class RobotContainer {
   
     // TEST STAGE: Register PathFinder Commands
       // values will be between 0 and 1 in this map
-      double[] PowerMap =
-      {
-          0,0,0,0,0,0,0,0,0,0,
-          0,0,0,0,0,0.1,0.1,0.1,0.15,0.15,
-          0.15,0.15,0.15,0.15,0.2,0.2,0.2,0.2,0.2,0.2,
-          0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.3,0.3,
-          0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.4,0.4,0.4,
-          0.4,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,
-          0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,
-          0.6,0.7,0.7,0.7,0.7,0.7,0.7,0.7,0.7,0.7,
-          0.7,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,
-          0.9,0.9,0.9,0.9,0.9,1,1,1,1,1,1
-      };
-     double ReturnValueFromMap(double index)
-     {
-          return index < 0 ? -PowerMap[(int)(-(index*100))] : PowerMap[(int)(index*100)];
-     }
+    double[] PowerMap =
+    {
+        0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0.1,0.1,0.1,0.15,0.15,
+        0.15,0.15,0.15,0.15,0.2,0.2,0.2,0.2,0.2,0.2,
+        0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.25,0.3,0.3,
+        0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.4,0.4,0.4,
+        0.4,0.4,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,
+        0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,
+        0.6,0.7,0.7,0.7,0.7,0.7,0.7,0.7,0.7,0.7,
+        0.7,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,
+        0.9,0.9,0.9,0.9,0.9,1,1,1,1,1,1
+    };
+    double ReturnValueFromMap(double index)
+    {
+        return index < 0 ? -PowerMap[(int)(-(index*100))] : PowerMap[(int)(index*100)];
+    }
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -145,10 +139,6 @@ public class RobotContainer {
           // Turning is controlled by the X axis of the right stick.
           new RunCommand(
               () -> m_robotDrive.drive(
-                  // getY() between 1 and -1 down is 1 up is -1
-                  // getX() between -1 and 1 where right is 1
-                  // get z is between 1 and -1 spin right is 1
-                  //max speed value robot can be set to drive is 3, scaling speed is capped around 3
                   
                   ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() , //m_operator.getRawAxis(3)
                   ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() , // * m_sonar.getSpeed(sonarOn)
@@ -183,18 +173,15 @@ public class RobotContainer {
             () -> m_climber.lower(),
             m_climber));
 
-        new JoystickButton(m_joystick1, 5)
-          .whileTrue(new RunCommand(
-            () -> m_intake.intake(),
-            m_intake));
+        // new JoystickButton(m_joystick1, 5)
+        //   .whileTrue(new RunCommand(
+        //     () -> m_intake.intake(),
+        //     m_intake));
 
-        new JoystickButton(m_joystick1, 6)
-          .whileTrue(new RunCommand(
-            () -> m_intake.shoot(),
-            m_intake));
-
-
-
+        // new JoystickButton(m_joystick1, 6)
+        //   .whileTrue(new RunCommand(
+        //     () -> m_intake.shoot(),
+        //     m_intake));
 
         // new JoystickButton(m_joystick1, 4)
         //     .whileTrue(new RunCommand(
@@ -218,10 +205,10 @@ public class RobotContainer {
     
           // Light function for OPERATOR lights amp motor
   
-        new JoystickButton(m_joystick2, 5)
+        new JoystickButton(m_joystick1, 5)
             .toggleOnTrue(Commands.startEnd(
               // Start Action: Begin aligning
-                () -> new AutoAlign(m_robotDrive, m_lime).schedule(),
+                () -> new AutoAlign(m_robotDrive, m_lime).execute(),
               // End Action: Stop aligning
                 () -> new AutoAlign(m_robotDrive, m_lime).cancel(),
               // Subsystems required by the AutoAlignCommand
@@ -306,10 +293,6 @@ public class RobotContainer {
             return 2.0; // 2.0
         }
     }
-
-    public void teleopPeriodic(){
-        // m_robotDrive.updatePidValues();
-    }
 /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -317,6 +300,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     //m_robotDrive.updatePidValues();
-    return m_chooser.getSelected();
+    return m_align;
   }
 }
