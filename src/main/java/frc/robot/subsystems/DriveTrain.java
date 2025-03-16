@@ -28,18 +28,17 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.controllers.PPLTVController;
 
-import java.io.IOException;
-// import com.pathplanner.lib.util.ReplanningConfig;
-import java.util.Map;
-
-import org.json.simple.parser.ParseException;
-/* The DriveTrain class handles the drive subsystem of the robot.
- * Configured for REV Robotics Swerve Modules
- * 
+/* 
+ * The DriveTrain class handles the drive subsystem of the robot.
+ * Configured for REV Robotics Swerve Modules 
  */
 public class DriveTrain extends SubsystemBase {
+  private static final DriveTrain m_DriveTrain = new DriveTrain();
+  
+  public static DriveTrain getInstance() {
+      return m_DriveTrain;
+  }
     // Creates swerve modules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -96,7 +95,7 @@ public class DriveTrain extends SubsystemBase {
       });
 
   // Creates new Drive Subsystem
-  public DriveTrain() {
+  private DriveTrain() {
     // All other subsystem initialization
     // ...
 

@@ -1,35 +1,16 @@
 package frc.robot.subsystems;
 
-
-// import edu.wpi.first.networktables.NetworkTable;
-// import edu.wpi.first.networktables.NetworkTableInstance;
-// import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
-// public class Limelight extends SubsystemBase {
-//     private final NetworkTable tableInstance = NetworkTableInstance.getDefault().getTable("limelight");
-
-
-//     // Fetch the horizontal offset ("tx") from the target
-//     public double getYawError() {
-//         return tableInstance.getEntry("tx").getDouble(0.0); // tx is the horizontal offset
-//     }
-
-
-//     // Check if the target is valid
-//     public boolean hasValidTarget() {
-//         return tableInstance.getEntry("tv").getDouble(0.0) == 1.0; // tv is 1.0 if a target is detected
-//     }
-// }
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
     private final NetworkTable tableInstance = NetworkTableInstance.getDefault().getTable("limelight");
-    
-
+    private static final Limelight m_limelight = new Limelight();
+    public static Limelight getInstance() {
+        return m_limelight;
+    }
+    private Limelight() {}
     // Fetch the horizontal offset ("tx") from the target
     public double getYawError() {
         return tableInstance.getEntry("tx").getDouble(0.0); // tx is the horizontal offset

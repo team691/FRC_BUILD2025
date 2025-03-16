@@ -6,8 +6,6 @@ import frc.robot.subsystems.Limelight;
 
 
 public class AutoAlign extends Command {
-    private final DriveTrain driveTrain;
-    private final Limelight limelight;
    
     // Constants for PID tuning
     private static final double kP_Yaw = 0.02; // Adjust for yaw correction
@@ -15,21 +13,17 @@ public class AutoAlign extends Command {
     private static final double kP_Strafe = 0.05; // Adjust for strafe correction
     private static final double TARGET_DISTANCE = 0.5; // Stop at 0.5 meters from the tag
 
-
-    public AutoAlign(DriveTrain driveTrain, Limelight limelight) {
-        this.driveTrain = driveTrain;
-        this.limelight = limelight;
-        addRequirements(driveTrain);
+    public AutoAlign() {
+        addRequirements(DriveTrain.getInstance());
     }
-
 
     @Override
     public void execute() {
-        if (limelight.hasValidTarget()) {
+        if (Limelight.getInstance().hasValidTarget()) {
             // Get data from Limelight
-            double yawError = limelight.getYawError(); // Horizontal alignment
-            double forwardDistance = limelight.getForwardDistance(); // Distance to target
-            double strafeDistance = limelight.getStrafeDistance(); // Side alignment
+            double yawError = Limelight.getInstance().getYawError(); // Horizontal alignment
+            double forwardDistance = Limelight.getInstance().getForwardDistance(); // Distance to target
+            double strafeDistance = Limelight.getInstance().getStrafeDistance(); // Side alignment
             // System.out.println("YawError: " + yawError + " Foward Dis: " +
             //  forwardDistance + " StrafeDistance: " + strafeDistance);
             
@@ -50,12 +44,12 @@ public class AutoAlign extends Command {
     }
 
     public void cancel(){
-        driveTrain.drive(0.0, 0.0, 0.0, true, false);
+        DriveTrain.getInstance().drive(0.0, 0.0, 0.0, true, false);
     }
     @Override
     public void end(boolean interrupted) {
         // Stop the drivetrain when toggled off
-        driveTrain.drive(0.0, 0.0, 0.0, true, false);
+        DriveTrain.getInstance().drive(0.0, 0.0, 0.0, true, false);
     }
 
 
