@@ -166,13 +166,16 @@ public class RobotContainer {
         new JoystickButton(m_joystick1, 3)
           .whileTrue(new RunCommand(
             () -> m_climber.climb(),
-            m_climber)).whileFalse(new RunCommand(() -> m_climber.stop(),m_climber));
+            m_climber));
 
         new JoystickButton(m_joystick1, 4)
           .whileTrue(new RunCommand(
             () -> m_climber.lower(),
             m_climber));
-
+        new JoystickButton(m_joystick1, 5)
+            .whileTrue(new RunCommand(
+              () -> m_climber.stop(),
+              m_climber));
         // new JoystickButton(m_joystick1, 5)
         //   .whileTrue(new RunCommand(
         //     () -> m_intake.intake(),
