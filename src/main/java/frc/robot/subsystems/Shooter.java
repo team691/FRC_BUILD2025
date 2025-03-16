@@ -13,7 +13,7 @@ import java.util.TimerTask;
 
 
 //Ideal for this is that on our reef board a button click will just align the robot, and one more button, probably on the joystick would shoot it
-// Intake would be automatic from beam breakers -> this would be written in robot container d
+// Intake would be automatic from beam breakers -> this would be written in commands thingy
 
 public class Shooter extends SubsystemBase {
     // Define the SPARK MAX motor controllers with their CAN IDs
