@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import org.ironmaple.simulation.SimulatedArena;
+
 import com.ctre.phoenix.led.CANdle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 // import frc.robot.subsystems.DriveTrain;
+import frc.robot.enums.RobotMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,9 +21,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private static final RobotMode JAVA_SIM_MODE = RobotMode.SIM;
+  public static final RobotMode CURRENT_ROBOT_MODE = isReal() ? RobotMode.REAL : JAVA_SIM_MODE;
 
   private RobotContainer m_robotContainer;
-  private CANdle candle = new CANdle(0);
   
 
   /**
@@ -33,7 +37,6 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
   }
-
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -47,6 +50,8 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    if (CURRENT_ROBOT_MODE == RobotMode.SIM) robotContainer.updateFieldSimAndDisplay();
+    MapleSubsystem.checkForOnDisableAndEnable();
     CommandScheduler.getInstance().run();
   }
 
@@ -59,7 +64,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    candle.setLEDs(255, 0, 0);
+    //candle.setLEDs(255, 0, 0);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -83,7 +88,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    candle.setLEDs(0, 0, 255);
+    //candle.setLEDs(0, 0, 255);
   }
 
   @Override
@@ -95,7 +100,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    candle.setLEDs(0, 255, 0);
+    //candle.setLEDs(0, 255, 0);
   }
 
   /** This function is called periodically during operator control. */
@@ -118,4 +123,10 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
     //m_lights.Red();
   }
+  /** This function is called once when the robot is first started up. */
+  @Override
+  public void simulationInit() {}
+
+  @Override
+  public void simulationPeriodic() {}
 }

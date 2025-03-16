@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.led.CANdle;
 import com.pathplanner.lib.auto.AutoBuilder;
 // import com.pathplanner.lib.auto.NamedCommands;
 // import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -48,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Limelight;
 import frc.robot.commands.AutoAlign;
+import frc.robot.enums.RobotMode;
 // import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import frc.robot.subsystems.BeamBreakers;
@@ -64,11 +66,13 @@ import frc.robot.subsystems.Climber;
 
 public class RobotContainer {
   // The robot's subsystems
+  private static final RobotMode JAVA_SIM_MODE = RobotMode.SIM;
     public final DriveTrain m_robotDrive = new DriveTrain();
     private final Climber m_climber = new Climber();
     //private final Lights m_lights = new Lights();
     private final Limelight m_lime = new Limelight();
-    private static boolean sonarOn = true;
+    private static boolean sonarOn = true; 
+    private CANdle candle = new CANdle(0);
     // public final BeamBreakers m_beam = new BeamBreakers();
     // private final LevelOne m_levelone = new LevelOne();
 
