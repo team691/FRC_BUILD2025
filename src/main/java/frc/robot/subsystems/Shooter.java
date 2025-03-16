@@ -1,35 +1,54 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+
+//Ideal for this is that on our reef board a button click will just align the robot, and one more button, probably on the joystick would shoot it
+// Intake would be automatic from beam breakers -> this would be written in robot container d
+
 public class Shooter extends SubsystemBase {
     // Define the SPARK MAX motor controllers with their CAN IDs
-    private final SparkMax motorOuttake;
-    private final SparkMax motorIntake;
+    private final SparkMax Shooter;
+    private final SparkMax PassThrough;
 
-    private static final double MOTOR_POWER = 1.0; // Default motor power level
     private static final int DEFAULT_DURATION_MS = 2000; // Default duration in milliseconds
 
     public Shooter() {
-        motorOuttake = new SparkMax(1, MotorType.kBrushless);
-        motorIntake = new SparkMax(2, MotorType.kBrushless);
+        Shooter = new SparkMax(Constants.ShooterConstants.ShooterID, MotorType.kBrushless);
+        PassThrough = new SparkMax(Constants.ShooterConstants.PassThroughID, MotorType.kBrushless);
     }
 
     // Intake method with a timer
-    public void intake() {
-        motorIntake.set(MOTOR_POWER); // Start motor
-        stopMotorAfterDelay(motorIntake, DEFAULT_DURATION_MS); // Stop motor after delay
+    public Command passTest() {
+        return run(() -> {
+            PassThrough.set(Constants.ShooterConstants.PassThroughPower); // Start motor
+        });
     }
 
     // Shoot method with a timer
-    public void shoot() {
-        motorOuttake.set(MOTOR_POWER); // Start motor
-        stopMotorAfterDelay(motorOuttake, DEFAULT_DURATION_MS); // Stop motor after delay
+    public Command shootTest() {
+        return run(() -> {
+            Shooter.set(Constants.ShooterConstants.ShooterPower); // Start motor
+        });
+    }
+    public Command stopShoot() {
+        return run(() -> {
+            Shooter.set(0); // Start motor
+        });
+    }
+    public Command stopPass() {
+        return run(() -> {
+            PassThrough.set(0); // Start motor
+        });
     }
 
     // Helper method to stop a motor after a certain delay

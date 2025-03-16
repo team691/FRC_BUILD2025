@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoAlign;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 
@@ -69,15 +70,13 @@ public class Controller {
                 DriveTrain.getInstance()));
 
         new JoystickButton(m_joystick1, 3)
-          .whileTrue(new RunCommand(
-            () -> m_climber.climb(),
-            m_climber)).whileFalse(new RunCommand(() -> m_climber.stop(),m_climber));
+          .whileTrue(Climber.getInstance().climb());
 
         new JoystickButton(m_joystick1, 4)
-          .whileTrue(new RunCommand(
-            () -> m_climber.lower(),
-            m_climber));
+          .whileTrue(Climber.getInstance().lower());
 
+        new JoystickButton(m_joystick1, 5)
+            .whileTrue(Climber.getInstance().stop());
         // new JoystickButton(m_joystick1, 5)
         //   .whileTrue(new RunCommand(
         //     () -> m_intake.intake(),
@@ -97,65 +96,19 @@ public class Controller {
         //     .whileTrue(new RunCommand(
         //         () -> m_intake.outtake(-0.5), // Move whole intake mechanism down
         //         m_robotDrive));
+  
     
-        // Light function for OPERATOR lights amp motor
-  
-        //   new JoystickButton(m_joystick1, 5)
-        //   .toggleOnTrue(Commands.startEnd(
-        //       // Start Action: Begin aligning
-        //       () -> changeSonar(),
-        //       // End Action: Stop aligning
-        //       () -> changeSonar(),
-        //       // Subsystems required by the AutoAlignCommand
-        //       m_sonar
-        //   ));
-  
-          // new JoystickButton(m_joystick2)
-          // .whileTrue(
-          //     new RunCommand(
-          //         () -> m_alage.intake()
-          //     ),
-          //     m_joystick2
-          // )
-          // new JoystickButton(m_joystick1, 3)
-          // .whileTrue(new RunCommand(
-          //     () -> m_alage.uplift(),
-          //     m_alage));
-          // This line is causing the error
         // Bind "intake" to button 1 on joystick 2 (change button number as needed)
-            // new JoystickButton(m_joystick2, 1)
-            //     .whileTrue(new RunCommand(m_algae::intake, m_algae));
+        // new JoystickButton(m_joystick1, 7)
+        // .whileTrue(new RunCommand(
+        //     () -> m_levelone.outake(),
+        //     m_levelone));
 
-            // new JoystickButton(m_joystick2, 2)
-            //     .whileTrue(new RunCommand(m_algae::outTake, m_algae));
-        
-            // // Bind "uplift" to button 2 on joystick 2
-            // new JoystickButton(m_joystick2, 3)
-            //     .whileTrue(new RunCommand(m_algae::uplift, m_algae));
-        
-            // // Bind "lower" to button 3 on joystick 2
-            // new JoystickButton(m_joystick2, 4)
-            //     .whileTrue(new RunCommand(m_algae::lower, m_algae));
-        
-            // // Bind "stop" to button 4 on joystick 2
-            // new JoystickButton(m_joystick2, 5)
-            //     .onTrue(new RunCommand(m_algae::stop, m_algae));
+        // new JoystickButton(m_joystick1, 8)
+        // .whileTrue(new RunCommand(
+        //     () -> m_levelone.intake(),
+        //     m_levelone));
 
-            // new JoystickButton(m_joystick1, 4)
-            // .whileTrue(new RunCommand(
-            //     () -> m_fourbar.setPosition(5),
-            //     m_fourbar));
-
-            // new JoystickButton(m_joystick1, 7)
-            // .whileTrue(new RunCommand(
-            //     () -> m_levelone.outake(),
-            //     m_levelone));
-
-            // new JoystickButton(m_joystick1, 8)
-            // .whileTrue(new RunCommand(
-            //     () -> m_levelone.intake(),
-            //     m_levelone));
-    
         // Other existing bindings remain unchanged...      
           
     }
