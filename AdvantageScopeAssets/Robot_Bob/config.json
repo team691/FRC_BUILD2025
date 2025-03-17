@@ -1,0 +1,21 @@
+
+{
+  "name": "Bob",
+  "sourceUrl": "https://cad.onshape.com/documents/cbfd55367163fa3a5198bd13/w/da33cbf60efe2952850e03bd/e/c6878d15eba116cd7c4b7e7f",
+  "disableSimplification": false, 
+  "rotations": [],
+  "position": [
+    0,
+    0,
+    0
+  ],
+  "cameras": [ ],
+  "components": [
+    {
+      "zeroedRotations": [
+
+      ],
+      "zeroedPosition": []
+    }
+  ] 
+}
