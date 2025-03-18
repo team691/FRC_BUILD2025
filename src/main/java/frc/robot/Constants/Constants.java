@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.Constants;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
@@ -6,6 +6,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 //import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,9 +18,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   // Drive constants pertain to the handling and motors of the drivetrain
-  public static final class DriveConstants {
-    
-    
+  public static final class DriveConstants {    
     // Driving parameters
     public static final double kMaxSpeedMetersPerSecond = 4.0; //set to 4.0
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
@@ -63,7 +62,6 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
   }
 
-  //
   public static final class ModuleConstants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a

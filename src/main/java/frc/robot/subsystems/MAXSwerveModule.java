@@ -13,19 +13,9 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import frc.robot.Configs;
 
-// import com.revrobotics.CANSparkMax;
-// //import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-// //import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-// //import com.revrobotics.SparkMaxPIDController;
-// import com.revrobotics.CANSparkLowLevel.MotorType;
-// import com.revrobotics.SparkAbsoluteEncoder.Type;
-// //import com.revrobotics.SparkAbsoluteEncoder;
-// import com.revrobotics.SparkPIDController;
-//import com.revrobotics.CANSparkMax.
-
-import frc.robot.Constants.ModuleConstants;
+import frc.robot.Constants.Configs;
+import frc.robot.Constants.Constants.ModuleConstants;
 
 public class MAXSwerveModule {
   private final SparkMax m_drivingSparkMax;

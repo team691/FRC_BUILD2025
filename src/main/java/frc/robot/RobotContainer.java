@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.Objects;
 
 import org.ironmaple.simulation.SimulatedArena;
@@ -35,8 +37,6 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Joystick;
-//import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Lights;
 //import frc.robot.utils.AlertsManager;
@@ -55,6 +55,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 // import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants.Configs;
+import frc.robot.Constants.Constants;
+import frc.robot.Constants.Constants.OIConstants;
 import frc.robot.commands.AutoAlign;
 import frc.robot.enums.RobotMode;
 // import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -104,7 +107,6 @@ public class RobotContainer {
           : stream
       );
 
-      driveSimulation = null;
       switch (Robot.CURRENT_ROBOT_MODE) {
             case REAL -> {
                 // Real robot, instantiate hardware IO implementations
@@ -118,43 +120,29 @@ public class RobotContainer {
 
             case SIM -> {
                 SimulatedArena.overrideSimulationTimings(
-                        Seconds.of(Robot.defaultPeriodSecs), Constants.DriveConstants.SIMULATION_TICKS_IN_1_PERIOD);
+                        Seconds.of(0.02), Configs.DriveTrainConstants.SIMULATION_TICKS_IN_1_PERIOD);
                 this.driveSimulation = new SwerveDriveSimulation(
                         DriveTrainSimulationConfig.Default()
-                                .withRobotMass(Constants.DriveConstants.ROBOT_MASS)
-                                .withBumperSize(Constants.DriveConstants.BUMPER_LENGTH, Constants.DriveConstants.BUMPER_WIDTH)
+                                .withRobotMass(Configs.DriveTrainConstants.ROBOT_MASS)
+                                .withBumperSize(Configs.DriveTrainConstants.BUMPER_LENGTH, Configs.DriveTrainConstants.BUMPER_WIDTH)
                                 .withTrackLengthTrackWidth(
-                                        Constants.DriveConstants.TRACK_LENGTH, Constants.DriveConstants.TRACK_WIDTH)
+                                        Configs.DriveTrainConstants.TRACK_LENGTH, Configs.DriveTrainConstants.TRACK_WIDTH)
                                 .withSwerveModule(new SwerveModuleSimulationConfig(
-                                        Constants.DriveConstants.DRIVE_MOTOR_MODEL,
-                                        Constants.DriveConstants.STEER_MOTOR_MODEL,
-                                        Constants.DriveConstants.DRIVE_GEAR_RATIO,
-                                        Constants.DriveConstants.STEER_GEAR_RATIO,
-                                        Constants.DriveConstants.DRIVE_FRICTION_VOLTAGE,
-                                        Constants.DriveConstants.STEER_FRICTION_VOLTAGE,
-                                        Constants.DriveConstants.WHEEL_RADIUS,
-                                        Constants.DriveConstants.STEER_INERTIA,
-                                        Constants.DriveConstants.WHEEL_COEFFICIENT_OF_FRICTION))
-                                .withGyro(Constants.DriveConstants.gyroSimulationFactory),
+                                        Configs.DriveTrainConstants.DRIVE_MOTOR_MODEL,
+                                        Configs.DriveTrainConstants.STEER_MOTOR_MODEL,
+                                        Configs.DriveTrainConstants.DRIVE_GEAR_RATIO,
+                                        Configs.DriveTrainConstants.STEER_GEAR_RATIO,
+                                        Configs.DriveTrainConstants.DRIVE_FRICTION_VOLTAGE,
+                                        Configs.DriveTrainConstants.STEER_FRICTION_VOLTAGE,
+                                        Configs.DriveTrainConstants.WHEEL_RADIUS,
+                                        Configs.DriveTrainConstants.STEER_INERTIA,
+                                        Configs.DriveTrainConstants.WHEEL_COEFFICIENT_OF_FRICTION))
+                                .withGyro(Configs.DriveTrainConstants.gyroSimulationFactory),
                         new Pose2d(3, 3, new Rotation2d()));
                 SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
 
                 powerDistribution = LoggedPowerDistribution.getInstance();
                 // Sim robot, instantiate physics sim IO implementations
-                final ModuleIOSim frontLeft = new ModuleIOSim(driveSimulation.getModules()[0]),
-                        frontRight = new ModuleIOSim(driveSimulation.getModules()[1]),
-                        backLeft = new ModuleIOSim(driveSimulation.getModules()[2]),
-                        backRight = new ModuleIOSim(driveSimulation.getModules()[3]);
-                final GyroIOSim gyroIOSim = new GyroIOSim(driveSimulation.getGyroSimulation());
-                drive = new SwerveDrive(
-                        SwerveDrive.DriveType.GENERIC,
-                        gyroIOSim,
-                        (canBusInputs) -> {},
-                        frontLeft,
-                        frontRight,
-                        backLeft,
-                        backRight);
-
                 SimulatedArena.getInstance().resetFieldForAuto();
             }
 
@@ -177,27 +165,24 @@ public class RobotContainer {
       //SmartDashboard.putData(m_chooser);
     }
 
-  public void updateFieldSimAndDisplay() {
-      // if (driveSimulation == null) return;
+    public void resetSimulationField() {
+      if (!Robot.isSimulation()) return;
 
-      // SimulatedArena.getInstance().simulationPeriodic();
-      // Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
-      // Logger.recordOutput(
-      //         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-      // Logger.recordOutput(
-      //         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+      DriveTrain.getInstance().resetOdometry(new Pose2d(3, 3, new Rotation2d()));
+      SimulatedArena.getInstance().resetFieldForAuto();
   }
-  public void updateTelemetryAndLED() {
-    // field.setRobotPose(
-    //         Robot.CURRENT_ROBOT_MODE == RobotMode.SIM
-    //                 ? driveSimulation.getSimulatedDriveTrainPose()
-    //                 : drive.getPose());
-    // if (Robot.CURRENT_ROBOT_MODE == RobotMode.SIM)
-    //     field.getObject("Odometry").setPose(drive.getPose());
 
-    // AlertsManager.updateLEDAndLog(ledStatusLight);
-}
-/**
+  public void updateSimulation() {
+      if (!Robot.isSimulation()) return;
+
+      SimulatedArena.getInstance().simulationPeriodic();
+      Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+      Logger.recordOutput(
+              "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+      Logger.recordOutput(
+              "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+  }
+  /* 
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous

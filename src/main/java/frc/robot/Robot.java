@@ -26,14 +26,13 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private static final RobotMode JAVA_SIM_MODE = RobotMode.SIM;
   public static final RobotMode CURRENT_ROBOT_MODE = isReal() ? RobotMode.REAL : JAVA_SIM_MODE;
@@ -51,28 +50,31 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard. 
 
     // Set up data receivers & replay source
-    switch (CURRENT_ROBOT_MODE) {
-        case REAL -> {
-            // Running on a real robot, log to a USB stick ("/U/logs")
-            Logger.addDataReceiver(new WPILOGWriter());
-            Logger.addDataReceiver(new NT4Publisher());
-        }
-        case SIM -> {
-            // Running a physics simulator
-            // Log to CodeDirectory/logs if you want to test logging system in a simulation
-            // Logger.addDataReceiver(new WPILOGWriter());
-            Logger.addDataReceiver(new NT4Publisher());
-        }
-        case REPLAY -> {
-            // Replaying a log, set up replay source
-            String logPath = LogFileUtil.findReplayLog();
-            Logger.setReplaySource(new WPILOGReader(logPath));
-            Logger.addDataReceiver(new WPILOGWriter(
-                    LogFileUtil.addPathSuffix(logPath, "_replayed"),
-                    WPILOGWriter.AdvantageScopeOpenBehavior.ALWAYS));
-        }
-    }
+    
+        // Set up data receivers & replay source
+        switch (CURRENT_ROBOT_MODE) {
+          case REAL:
+              // Running on a real robot, log to a USB stick ("/U/logs")
+              Logger.addDataReceiver(new WPILOGWriter());
+              Logger.addDataReceiver(new NT4Publisher());
+              break;
 
+          case SIM:
+              // Running a physics simulator, log to NT
+              Logger.addDataReceiver(new NT4Publisher());
+              break;
+
+          case REPLAY:
+              // Replaying a log, set up replay source
+              //setUseTiming(false); // Run as fast as possible
+              String logPath = LogFileUtil.findReplayLog();
+              Logger.setReplaySource(new WPILOGReader(logPath));
+              Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+              break;
+      }
+
+      // Start AdvantageKit logger
+      Logger.start();
     m_robotContainer = new RobotContainer();
     
     Logger.start();
@@ -165,12 +167,12 @@ public class Robot extends TimedRobot {
   }
   /** This function is called once when the robot is first started up. */
  /** This function is called once when the robot is first started up. */
-  @Override
-  public void simulationInit() {}
+ @Override
+ public void simulationInit() {}
 
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {
-      m_robotContainer.updateFieldSimAndDisplay();
-  }
+ /** This function is called periodically whilst in simulation. */
+ @Override
+ public void simulationPeriodic() {
+     m_robotContainer.updateSimulation();
+ }
 }

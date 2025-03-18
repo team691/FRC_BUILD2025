@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.Constants.OIConstants;
 import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
