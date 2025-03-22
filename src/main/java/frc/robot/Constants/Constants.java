@@ -61,7 +61,32 @@ public final class Constants {
     // Is gyro reversed?
     public static final boolean kGyroReversed = false;
   }
+  public static final class ButtonBoardConstants{
+    public static final int ReefID = 2;
+    public static final int BlueID = 3;
 
+    public static final class Blue {
+      public static final int ClimbF = 1;
+      public static final int ClimbR = 2;
+      public static final int Outtake = 3;
+      public static final int Align = 4;
+    }
+
+    public static final class Reef {
+      public static final int FarLeftRed = 1;
+      public static final int CloseLeftWhite = 2;
+      public static final int CloseLeftRed = 3;
+      public static final int CloseWhite = 4;
+      public static final int CloseRed = 5;
+      public static final int CloseRightWhite = 6;
+      public static final int CloseRightRed = 7;
+      public static final int FarRightWhite = 8;
+      public static final int FarRightRed = 9;
+      public static final int FarWhite = 10;
+      public static final int FarRed = 11;
+      public static final int FarLeftWhite = 12;
+    }
+  }
   public static final class ModuleConstants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a

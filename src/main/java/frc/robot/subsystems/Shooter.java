@@ -5,7 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Constants;
-
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import java.util.Timer;
@@ -17,14 +17,16 @@ import java.util.TimerTask;
 
 public class Shooter extends SubsystemBase {
     // Define the SPARK MAX motor controllers with their CAN IDs
-    private final SparkMax Shooter;
-    private final SparkMax PassThrough;
+    private final TalonFX Shooter;
+    private final TalonFX PassThrough;
 
     private static final int DEFAULT_DURATION_MS = 2000; // Default duration in milliseconds
 
     public Shooter() {
-        Shooter = new SparkMax(Constants.ShooterConstants.ShooterID, MotorType.kBrushless);
-        PassThrough = new SparkMax(Constants.ShooterConstants.PassThroughID, MotorType.kBrushless);
+        // Shooter = new SparkMax(Constants.ShooterConstants.ShooterID, MotorType.kBrushless);
+        // PassThrough = new SparkMax(Constants.ShooterConstants.PassThroughID, MotorType.kBrushless);
+        Shooter = new TalonFX(1);
+        PassThrough = new TalonFX(2);
     }
 
     // Intake method with a timer

@@ -10,9 +10,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.SwerveUtils;
 import frc.robot.Constants.Constants.DriveConstants;
 import frc.robot.Constants.Constants.ModuleConstants;
+import frc.robot.utils.SwerveUtils;
 // Position imports
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
