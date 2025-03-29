@@ -9,7 +9,7 @@ public class Climber extends SubsystemBase {
     private static final Climber m_climb = new Climber();
     public static Climber getInstance() {return m_climb;}
 
-    private final TalonFX tfmotor = new TalonFX(0);
+    private final TalonFX tfmotor = new TalonFX(1);
     private static final double MOTOR_POWER_CLIMB = 0.2; // Default motor power level
 
     private Climber() {

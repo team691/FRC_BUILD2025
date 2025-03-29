@@ -2,33 +2,58 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Constants;
+import frc.robot.enums.ShooterStates;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-
-//Ideal for this is that on our reef board a button click will just align the robot, and one more button, probably on the joystick would shoot it
-// Intake would be automatic from beam breakers -> this would be written in commands thingy
-
 public class Shooter extends SubsystemBase {
+    private static Shooter m_Shooter = new Shooter();
+    public static Shooter getInstance() {
+        return m_Shooter;
+    }
+
+    public boolean isLaunched = false;
     // Define the SPARK MAX motor controllers with their CAN IDs
     private final TalonFX Shooter;
     private final TalonFX PassThrough;
+    public ShooterStates states = ShooterStates.Reset; 
 
-    private static final int DEFAULT_DURATION_MS = 2000; // Default duration in milliseconds
-
-    public Shooter() {
-        // Shooter = new SparkMax(Constants.ShooterConstants.ShooterID, MotorType.kBrushless);
-        // PassThrough = new SparkMax(Constants.ShooterConstants.PassThroughID, MotorType.kBrushless);
-        Shooter = new TalonFX(1);
+    private Shooter() {
+        Shooter = new TalonFX(3);
         PassThrough = new TalonFX(2);
     }
-
+    public boolean Score(){
+        switch(states){
+            case Reset:
+                Shooter.set(0);
+                PassThrough.set(0);
+                states = ShooterStates.MoveForward;
+                isLaunched = false;
+                break;
+            case MoveForward:
+                stopMotorAfterDelay(PassThrough, 0.1, 1500);
+                stopMotorAfterDelay(Shooter, 0.1, 1500);
+                states = ShooterStates.Reverse;
+                break;
+            case Reverse:
+                stopMotorAfterDelay(Shooter, -0.1, 1500);   
+                states = ShooterStates.Stop;
+                break;
+            case Stop:
+                Shooter.set(0);
+                PassThrough.set(0);
+                return true;
+        }
+        return false;
+    }
     // Intake method with a timer
     public Command passTest() {
         return run(() -> {
@@ -39,7 +64,9 @@ public class Shooter extends SubsystemBase {
     // Shoot method with a timer
     public Command shootTest() {
         return run(() -> {
-            Shooter.set(Constants.ShooterConstants.ShooterPower); // Start motor
+            Shooter.set(Constants.ShooterConstants.ShooterPower); 
+            states = ShooterStates.Reset;
+            isLaunched = true;// Start motor
         });
     }
     public Command stopShoot() {
@@ -54,8 +81,9 @@ public class Shooter extends SubsystemBase {
     }
 
     // Helper method to stop a motor after a certain delay
-    private void stopMotorAfterDelay(SparkMax motor, int delayMs) {
+    private void stopMotorAfterDelay(TalonFX motor, double speed, int delayMs) {
         Timer timer = new Timer();
+        motor.set(speed);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

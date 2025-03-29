@@ -13,8 +13,9 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 
 public class Controller {
-    Joystick m_joystick1 = new Joystick(OIConstants.kDriverControllerPort);
+    Joystick m_joystick1 = new Joystick(0);//OIConstants.kDriverControllerPort);
     Joystick m_joystick2 = new Joystick(OIConstants.kDriverControllerPort2);
+    ButtonBoard buttonBoard = new ButtonBoard();
     //XboxController m_operator = new XboxController(OIConstants.kDriverControllerPort3);
 
     // values will be between 0 and 1 in this map
@@ -44,15 +45,15 @@ public class Controller {
         }
     }
     public Controller (){
-        DriveTrain.getInstance().setDefaultCommand(new RunCommand(
-              () -> DriveTrain.getInstance().drive(
+        // DriveTrain.getInstance().setDefaultCommand(new RunCommand(
+        //       () -> DriveTrain.getInstance().drive(
                   
-                  ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() , //m_operator.getRawAxis(3)
-                  ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() , // * m_sonar.getSpeed(sonarOn)
-                  (-MathUtil.applyDeadband(m_joystick2.getZ(), OIConstants.kDriveDeadband)) * 3.5,
-                  true, true),
-              DriveTrain.getInstance()));
-
+        //           ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() , //m_operator.getRawAxis(3)
+        //           ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() , // * m_sonar.getSpeed(sonarOn)
+        //           (-MathUtil.applyDeadband(m_joystick2.getZ(), OIConstants.kDriveDeadband)) * 3.5,
+        //           true, true),
+        //       DriveTrain.getInstance()));
+        //buttonBoard.SetupButtons();
         configureButtonBindings();
     }
 

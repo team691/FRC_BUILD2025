@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 // import frc.robot.subsystems.DriveTrain;
 import frc.robot.enums.RobotMode;
+import frc.robot.subsystems.BeamBreakers;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Shooter;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -39,7 +42,6 @@ public class Robot extends LoggedRobot {
 
   private RobotContainer m_robotContainer;
   
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -149,8 +151,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     //candle.setLEDs(0, 255, 0);
-    // System.out.println(m_robotContainer.m_beam.checkBeam());
-    System.out.println(DriveTrain.getInstance().getHeading());
+    if(BeamBreakers.getInstance().checkBeam()) {
+      if(!Shooter.getInstance().isLaunched) {
+        Shooter.getInstance().Score();
+      }
+    }
+    //System.out.println(DriveTrain.getInstance().getHeading());
   }
 
   @Override
