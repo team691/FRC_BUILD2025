@@ -88,7 +88,7 @@ public class RobotContainer {
     public final LoggedPowerDistribution powerDistribution;
 
     // The driver's controller
-    private final Controller controller = new Controller();
+    public final Controller controller = new Controller();
     
     // Initialize Sendable Chooser
     private final SendableChooser<Command> m_chooser;
@@ -154,8 +154,6 @@ public class RobotContainer {
 
       //driveSimulation = new SwerveDriveSimulation(null, null);
       SmartDashboard.putData("Auto Chooser", m_chooser);
-      // Configure the button bindings
-      //   new EventTrigger("L2").and(new Trigger(m_level2::intake)).onTrue(Commands.print("shoot note"));
       // Add PathPlanner autonomous
       //  new EventTrigger("align").and(new Trigger(m_align::execute)).onTrue(Commands.print("auto align"));
       

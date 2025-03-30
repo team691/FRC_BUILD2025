@@ -18,13 +18,13 @@ public class ButtonBoard {
                 () -> Climber.getInstance().climb(), Climber.getInstance()
                 ));
         
-        new JoystickButton(Blue, Constants.ButtonBoardConstants.Blue.Outtake)
-            .whileTrue(Shooter.getInstance().shootTest())
-            .whileFalse(Shooter.getInstance().stopShoot());
+        // new JoystickButton(Blue, Constants.ButtonBoardConstants.Blue.Outtake)
+        //     .whileTrue(Shooter.getInstance().shootTest())
+        //     .whileFalse(Shooter.getInstance().stopShoot());
         
-        new JoystickButton(Blue, Constants.ButtonBoardConstants.Blue.Align)
-            .whileTrue(Shooter.getInstance().passTest())
-            .whileFalse(Shooter.getInstance().stopPass());
+        // new JoystickButton(Blue, Constants.ButtonBoardConstants.Blue.Align)
+        //     .whileTrue(Shooter.getInstance().passTest())
+        //     .whileFalse(Shooter.getInstance().stopPass());
         
 /*      
         new JoystickButton(Blue, Constants.ButtonBoardConstants.Blue.Align)

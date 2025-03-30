@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 // import frc.robot.subsystems.DriveTrain;
 import frc.robot.enums.RobotMode;
-import frc.robot.subsystems.BeamBreakers;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Sonar;
@@ -40,7 +39,7 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private static final RobotMode JAVA_SIM_MODE = RobotMode.SIM;
   public static final RobotMode CURRENT_ROBOT_MODE = isReal() ? RobotMode.REAL : JAVA_SIM_MODE;
-
+  private boolean SetToCorrectPosition = false;
   private RobotContainer m_robotContainer;
   
   /**
@@ -152,14 +151,26 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     //candle.setLEDs(0, 255 , 0);
-    if(!Sonar.getInstance().checkSonar()) {
-      //System.out.println("broken");
-      // if(!Shooter.getInstance().isLaunched) {
-      //   Shooter.getInstance().Score();
-      // }
+    
+    if(SetToCorrectPosition){
+      if(!Shooter.getInstance().isLaunched){
+        Shooter.getInstance().Score();
+      }
+      else{
+        SetToCorrectPosition = false;
+      }
     }
-    else{
-      //System.out.println("asdfasdf not broken");
+    else {
+      if(Sonar.getInstance().checkSonar()){
+        System.out.println("broken");
+        SetToCorrectPosition = true;
+        Shooter.getInstance().isLaunched = false;
+        m_robotContainer.controller.TurnOffBelt();
+      }
+      else{
+        System.out.println("not broken");
+        m_robotContainer.controller.TurnOnBelt();
+      }
     }
     //System.out.println(DriveTrain.getInstance().getHeading());
   }

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.OIConstants;
@@ -13,13 +14,17 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Sonar;
 
-public class Controller {
+public class Controller extends SubsystemBase{
+
     Joystick m_joystick1 = new Joystick(0);//OIConstants.kDriverControllerPort);
     Joystick m_joystick2 = new Joystick(OIConstants.kDriverControllerPort2);
     ButtonBoard buttonBoard = new ButtonBoard();
     //XboxController m_operator = new XboxController(OIConstants.kDriverControllerPort3);
-
+    boolean shouldRunBelt = true;
+    boolean isPressed = false;
+    boolean isBeltOn = false;
     // values will be between 0 and 1 in this map
     private double[] PowerMap =
     {
@@ -34,8 +39,7 @@ public class Controller {
         0.7,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,
         0.9,0.9,0.9,0.9,0.9,1,1,1,1,1,1
     };
-    private double ReturnValueFromMap(double index)
-    {
+    private double ReturnValueFromMap(double index) {
         return index < 0 ? -PowerMap[(int)(-(index*100))] : PowerMap[(int)(index*100)];
     }
     private double setSpeed() {
@@ -71,54 +75,45 @@ public class Controller {
             .whileTrue(new RunCommand(
                 () -> DriveTrain.getInstance().zeroHeading(),
                 DriveTrain.getInstance()));
-        new JoystickButton(m_joystick1, Constants.ButtonBoardConstants.Blue.Outtake)
-            .whileTrue(Shooter.getInstance().shootTest())
+        new JoystickButton(m_joystick1, 3)
+            .whileTrue(Shooter.getInstance().shootTest(-0.5))
             .whileFalse(Shooter.getInstance().stopShoot());
-        
-        new JoystickButton(m_joystick1, Constants.ButtonBoardConstants.Blue.Align)
-            .whileTrue(Shooter.getInstance().passTest())
-            .whileFalse(Shooter.getInstance().stopPass());
-        new JoystickButton(m_joystick2, 3)
-          .whileTrue(Climber.getInstance().climb());
-
-        new JoystickButton(m_joystick2, 4)
-          .whileTrue(Climber.getInstance().lower());
-
-        new JoystickButton(m_joystick2, 5)
-            .whileTrue(Climber.getInstance().stop());
-        // new JoystickButton(m_joystick1, 5)
-        //   .whileTrue(new RunCommand(
-        //     () -> m_intake.intake(),
-        //     m_intake));
-
         // new JoystickButton(m_joystick1, 6)
-        //   .whileTrue(new RunCommand(
-        //     () -> m_intake.shoot(),
-        //     m_intake));
+        //     .whileTrue(Shooter.getInstance().shootTest(0.3))
+        //     .whileFalse(Shooter.getInstance().stopShoot());
+        // new JoystickButton(m_joystick2, 3)
+        //   .whileTrue(Climber.getInstance().climb());
 
-        // new JoystickButton(m_joystick1, 4)
-        //     .whileTrue(new RunCommand(
-        //         () -> m_intake.intake(0.6), // Move whole intake mechanism up
-        //         m_robotDrive));
-        
-        // new JoystickButton(m_joystick1, 6)
-        //     .whileTrue(new RunCommand(
-        //         () -> m_intake.outtake(-0.5), // Move whole intake mechanism down
-        //         m_robotDrive));
-  
-    
-        // Bind "intake" to button 1 on joystick 2 (change button number as needed)
-        // new JoystickButton(m_joystick1, 7)
-        // .whileTrue(new RunCommand(
-        //     () -> m_levelone.outake(),
-        //     m_levelone));
+        // new JoystickButton(m_joystick2, 4)
+        //   .whileTrue(Climber.getInstance().lower());
 
-        // new JoystickButton(m_joystick1, 8)
-        // .whileTrue(new RunCommand(
-        //     () -> m_levelone.intake(),
-        //     m_levelone));
-
-        // Other existing bindings remain unchanged...      
-          
+        // new JoystickButton(m_joystick2, 5)
+        //     .whileTrue(Climber.getInstance().stop());  
+    }
+    @Override
+    public void periodic(){
+        if(shouldRunBelt && !isPressed && m_joystick1.getRawButton(4)){
+            isPressed = true;
+            if(!isBeltOn){
+                Shooter.getInstance().passThrough().execute();
+                isBeltOn = true;
+            }
+            else {
+                isBeltOn = false;
+                Shooter.getInstance().stopPass().execute();
+            }
+        }
+        else if (shouldRunBelt && !m_joystick1.getRawButton(4)){
+            isPressed = false;
+        }
+    }
+    public void TurnOffBelt() {
+        shouldRunBelt = false;
+        isBeltOn = false;
+        isPressed = false;
+        //Shooter.getInstance().stopPass().execute();
+    }
+    public void TurnOnBelt(){
+        shouldRunBelt = true;
     }
 }

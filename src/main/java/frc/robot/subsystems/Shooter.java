@@ -2,16 +2,18 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Constants;
 import frc.robot.enums.ShooterStates;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class Shooter extends SubsystemBase {
@@ -19,7 +21,7 @@ public class Shooter extends SubsystemBase {
     public static Shooter getInstance() {
         return m_Shooter;
     }
-
+    public boolean shouldPassThrough = false;
     public boolean isLaunched = false;
     // Define the SPARK MAX motor controllers with their CAN IDs
     private final TalonFX Shooter;
@@ -30,24 +32,30 @@ public class Shooter extends SubsystemBase {
         Shooter = new TalonFX(3);
         PassThrough = new TalonFX(2);
     }
+
     public boolean Score(){
         switch(states){
             case Reset:
                 Shooter.set(0);
                 PassThrough.set(0);
+                Shooter.setPosition(0);
+                PassThrough.setPosition(0);
+                Timer.delay(1);
                 states = ShooterStates.MoveForward;
                 isLaunched = false;
                 break;
             case MoveForward:
-                stopMotorAfterDelay(PassThrough, 0.1, 1500);
-                stopMotorAfterDelay(Shooter, 0.1, 1500);
-                states = ShooterStates.Reverse;
-                break;
-            case Reverse:
-                stopMotorAfterDelay(Shooter, -0.1, 1500);   
-                states = ShooterStates.Stop;
+                PassThrough.set(0.5);
+                double a = PassThrough.getPosition().getValueAsDouble();
+                System.out.println(a);
+                if(a > 120){
+                    Shooter.set(0);
+                    PassThrough.set(0);
+                    states = ShooterStates.Stop;
+                }
                 break;
             case Stop:
+                System.out.println("stop");
                 Shooter.set(0);
                 PassThrough.set(0);
                 return true;
@@ -55,16 +63,17 @@ public class Shooter extends SubsystemBase {
         return false;
     }
     // Intake method with a timer
-    public Command passTest() {
+    public Command passThrough() {
         return run(() -> {
+            //System.out.println("asdfasdf");
             PassThrough.set(Constants.ShooterConstants.PassThroughPower); // Start motor
         });
     }
 
     // Shoot method with a timer
-    public Command shootTest() {
+    public Command shootTest(double speed) {
         return run(() -> {
-            Shooter.set(Constants.ShooterConstants.ShooterPower); 
+            Shooter.set(speed); 
             states = ShooterStates.Reset;
             isLaunched = true;// Start motor
         });
@@ -78,17 +87,5 @@ public class Shooter extends SubsystemBase {
         return run(() -> {
             PassThrough.set(0); // Start motor
         });
-    }
-
-    // Helper method to stop a motor after a certain delay
-    private void stopMotorAfterDelay(TalonFX motor, double speed, int delayMs) {
-        Timer timer = new Timer();
-        motor.set(speed);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                motor.set(0); // Stop the motor
-            }
-        }, delayMs);
     }
 }

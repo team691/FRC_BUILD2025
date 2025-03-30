@@ -174,7 +174,7 @@ public final class Constants {
     public static final int ShooterID = 9;
     public static final int PassThroughID = 10;
 
-    public static final double ShooterPower = -0.4;
+    public static final double ShooterPower = -0.2;
     public static final double PassThroughPower = 0.5;
   }
 
