@@ -6,11 +6,13 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.OIConstants;
 import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Shooter;
 
 public class Controller {
     Joystick m_joystick1 = new Joystick(0);//OIConstants.kDriverControllerPort);
@@ -45,15 +47,15 @@ public class Controller {
         }
     }
     public Controller (){
-        // DriveTrain.getInstance().setDefaultCommand(new RunCommand(
-        //       () -> DriveTrain.getInstance().drive(
+        DriveTrain.getInstance().setDefaultCommand(new RunCommand(
+              () -> DriveTrain.getInstance().drive(
                   
-        //           ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() , //m_operator.getRawAxis(3)
-        //           ReturnValueFromMap(-MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() , // * m_sonar.getSpeed(sonarOn)
-        //           (-MathUtil.applyDeadband(m_joystick2.getZ(), OIConstants.kDriveDeadband)) * 3.5,
-        //           true, true),
-        //       DriveTrain.getInstance()));
-        //buttonBoard.SetupButtons();
+                  ReturnValueFromMap(MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() , //m_operator.getRawAxis(3)
+                  ReturnValueFromMap(MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() , // * m_sonar.getSpeed(sonarOn)
+                  (-MathUtil.applyDeadband(m_joystick2.getZ(), OIConstants.kDriveDeadband)) * 3.5,
+                  true, true),
+              DriveTrain.getInstance()));
+        buttonBoard.SetupButtons();
         configureButtonBindings();
     }
 
@@ -69,14 +71,20 @@ public class Controller {
             .whileTrue(new RunCommand(
                 () -> DriveTrain.getInstance().zeroHeading(),
                 DriveTrain.getInstance()));
-
-        new JoystickButton(m_joystick1, 3)
+        new JoystickButton(m_joystick1, Constants.ButtonBoardConstants.Blue.Outtake)
+            .whileTrue(Shooter.getInstance().shootTest())
+            .whileFalse(Shooter.getInstance().stopShoot());
+        
+        new JoystickButton(m_joystick1, Constants.ButtonBoardConstants.Blue.Align)
+            .whileTrue(Shooter.getInstance().passTest())
+            .whileFalse(Shooter.getInstance().stopPass());
+        new JoystickButton(m_joystick2, 3)
           .whileTrue(Climber.getInstance().climb());
 
-        new JoystickButton(m_joystick1, 4)
+        new JoystickButton(m_joystick2, 4)
           .whileTrue(Climber.getInstance().lower());
 
-        new JoystickButton(m_joystick1, 5)
+        new JoystickButton(m_joystick2, 5)
             .whileTrue(Climber.getInstance().stop());
         // new JoystickButton(m_joystick1, 5)
         //   .whileTrue(new RunCommand(

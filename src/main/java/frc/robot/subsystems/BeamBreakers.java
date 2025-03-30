@@ -7,6 +7,7 @@ public class BeamBreakers extends SubsystemBase {
     public static BeamBreakers getInstance()  {
         return beamBreakers;
     }
+    
     private DigitalInput beamBreaker;
 
     private BeamBreakers() { 

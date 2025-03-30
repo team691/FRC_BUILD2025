@@ -22,6 +22,7 @@ import frc.robot.enums.RobotMode;
 import frc.robot.subsystems.BeamBreakers;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Sonar;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -150,11 +151,15 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //candle.setLEDs(0, 255, 0);
-    if(BeamBreakers.getInstance().checkBeam()) {
-      if(!Shooter.getInstance().isLaunched) {
-        Shooter.getInstance().Score();
-      }
+    //candle.setLEDs(0, 255 , 0);
+    if(!Sonar.getInstance().checkSonar()) {
+      //System.out.println("broken");
+      // if(!Shooter.getInstance().isLaunched) {
+      //   Shooter.getInstance().Score();
+      // }
+    }
+    else{
+      //System.out.println("asdfasdf not broken");
     }
     //System.out.println(DriveTrain.getInstance().getHeading());
   }

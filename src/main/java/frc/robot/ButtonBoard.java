@@ -10,7 +10,7 @@ import frc.robot.subsystems.Shooter;
 
 public class ButtonBoard {
     Joystick Reef = new Joystick(Constants.ButtonBoardConstants.ReefID);
-    Joystick Blue = new Joystick(OIConstants.kDriverControllerPort);//Constants.ButtonBoardConstants.BlueID);
+    Joystick Blue = new Joystick(3);//OIConstants.kDriverControllerPort);//Constants.ButtonBoardConstants.BlueID);
 
     public void SetupButtons(){
         new JoystickButton(Blue, Constants.ButtonBoardConstants.Blue.ClimbF)
