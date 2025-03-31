@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.OIConstants;
-import frc.robot.commands.AutoAlign;
+// import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
@@ -21,6 +21,7 @@ public class Controller extends SubsystemBase{
     Joystick m_joystick1 = new Joystick(0);//OIConstants.kDriverControllerPort);
     Joystick m_joystick2 = new Joystick(OIConstants.kDriverControllerPort2);
     ButtonBoard buttonBoard = new ButtonBoard();
+    Limelight m_lime = new Limelight(DriveTrain.getInstance());
     //XboxController m_operator = new XboxController(OIConstants.kDriverControllerPort3);
     boolean shouldRunBelt = true;
     boolean isPressed = false;
@@ -76,8 +77,13 @@ public class Controller extends SubsystemBase{
                 () -> DriveTrain.getInstance().zeroHeading(),
                 DriveTrain.getInstance()));
         new JoystickButton(m_joystick1, 3)
-            .whileTrue(Shooter.getInstance().shootTest(-0.5))
+            .whileTrue(Shooter.getInstance().shootTest(-0.45))
             .whileFalse(Shooter.getInstance().stopShoot());
+
+        new JoystickButton(m_joystick2, 5)
+            .whileTrue(new RunCommand(
+                () -> m_lime.alignDrive()
+            ));
         // new JoystickButton(m_joystick1, 6)
         //     .whileTrue(Shooter.getInstance().shootTest(0.3))
         //     .whileFalse(Shooter.getInstance().stopShoot());

@@ -58,7 +58,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.Configs;
 import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.OIConstants;
-import frc.robot.commands.AutoAlign;
+// import frc.robot.commands.AutoAlign;
 import frc.robot.enums.RobotMode;
 // import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -84,7 +84,7 @@ public class RobotContainer {
     // public final BeamBreakers m_beam = new BeamBreakers();
     // private final Shooter m_levelone = new LevelOne();
 
-    private final AutoAlign m_align = new AutoAlign();
+    // private final AutoAlign m_align = new AutoAlign();
     public final LoggedPowerDistribution powerDistribution;
 
     // The driver's controller
@@ -186,6 +186,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_align;
+    // return m_align;
+    return null;
   }
 }

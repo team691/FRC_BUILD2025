@@ -48,7 +48,7 @@ public class Shooter extends SubsystemBase {
                 PassThrough.set(0.5);
                 double a = PassThrough.getPosition().getValueAsDouble();
                 System.out.println(a);
-                if(a > 120){
+                if(a > 95){
                     Shooter.set(0);
                     PassThrough.set(0);
                     states = ShooterStates.Stop;
