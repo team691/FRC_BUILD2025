@@ -1,72 +1,28 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
-
-import java.util.Objects;
-
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
-
-import com.ctre.phoenix.led.CANdle;
 import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.auto.NamedCommands;
-// import com.pathplanner.lib.commands.PathPlannerAuto;
-// import java.util.List;
-
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.math.geometry.Translation2d;
-// import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-// import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-// import frc.robot.subsystems.SwerveSubsystem;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Lights;
-//import frc.robot.utils.AlertsManager;
-
-// import frc.robot.subsystems.Level2;
-// import frc.robot.subsystems.LevelOne;
-// import frc.robot.subsystems.Sonar;
-//import frc.robot.subsystems.Lights;
-// import edu.wpi.first.wpilibj2.command.Command;
-// import edu.wpi.first.wpilibj2.command.Commands;
-// import frc.robot.commands.basicLime;
+import frc.robot.subsystems.Shooter;
 import com.pathplanner.lib.events.EventTrigger;
-// import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-// import edu.wpi.first.wpilibj2.command.Subsystem;
-// import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.Configs;
-import frc.robot.Constants.Constants;
-import frc.robot.Constants.Constants.OIConstants;
-// import frc.robot.commands.AutoAlign;
 import frc.robot.enums.RobotMode;
-// import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import frc.robot.subsystems.BeamBreakers;
-// import frc.robot.subsystems.Sonar;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -81,10 +37,6 @@ public class RobotContainer {
     private static final RobotMode JAVA_SIM_MODE = RobotMode.SIM;
   
     private Lights m_lights = new Lights();
-    // public final BeamBreakers m_beam = new BeamBreakers();
-    // private final Shooter m_levelone = new LevelOne();
-
-    // private final AutoAlign m_align = new AutoAlign();
     public final LoggedPowerDistribution powerDistribution;
 
     // The driver's controller
@@ -99,7 +51,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-      // m_chooser = AutoBuilder.buildAutoChooser();
       boolean isCompetition = false;
       m_chooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
         (stream) -> isCompetition
@@ -107,6 +58,8 @@ public class RobotContainer {
           : stream
       );
 
+      NamedCommands.registerCommand("Shoot", Shooter.getInstance().shootTest(0.5));
+      
       switch (Robot.CURRENT_ROBOT_MODE) {
             case REAL -> {
                 // Real robot, instantiate hardware IO implementations
@@ -152,15 +105,12 @@ public class RobotContainer {
             }
         }
 
-      //driveSimulation = new SwerveDriveSimulation(null, null);
       SmartDashboard.putData("Auto Chooser", m_chooser);
       // Add PathPlanner autonomous
-      //  new EventTrigger("align").and(new Trigger(m_align::execute)).onTrue(Commands.print("auto align"));
+      new EventTrigger("Shoot").whileTrue(Shooter.getInstance().shootTest(-0.50));
       
       // Ignore controller warnings
       DriverStation.silenceJoystickConnectionWarning(true);
-       
-      //SmartDashboard.putData(m_chooser);
     }
 
     public void resetSimulationField() {
@@ -186,7 +136,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return m_align;
-    return null;
+    return m_chooser.getSelected();
   }
 }

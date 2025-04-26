@@ -1,20 +1,10 @@
 package frc.robot.subsystems;
-
-import com.revrobotics.spark.SparkMax;
-
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Constants;
 import frc.robot.enums.ShooterStates;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
-import java.util.TimerTask;
 
 public class Shooter extends SubsystemBase {
     private static Shooter m_Shooter = new Shooter();
@@ -40,22 +30,19 @@ public class Shooter extends SubsystemBase {
                 PassThrough.set(0);
                 Shooter.setPosition(0);
                 PassThrough.setPosition(0);
-                Timer.delay(1);
                 states = ShooterStates.MoveForward;
                 isLaunched = false;
                 break;
             case MoveForward:
-                PassThrough.set(0.5);
+                PassThrough.set(0.85);
                 double a = PassThrough.getPosition().getValueAsDouble();
-                System.out.println(a);
-                if(a > 95){
+                if(a > 120){
                     Shooter.set(0);
                     PassThrough.set(0);
                     states = ShooterStates.Stop;
                 }
                 break;
             case Stop:
-                System.out.println("stop");
                 Shooter.set(0);
                 PassThrough.set(0);
                 return true;
@@ -65,7 +52,6 @@ public class Shooter extends SubsystemBase {
     // Intake method with a timer
     public Command passThrough() {
         return run(() -> {
-            //System.out.println("asdfasdf");
             PassThrough.set(Constants.ShooterConstants.PassThroughPower); // Start motor
         });
     }

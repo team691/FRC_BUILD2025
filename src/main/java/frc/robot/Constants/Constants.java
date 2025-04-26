@@ -3,14 +3,11 @@ package frc.robot.Constants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 // Imports
-//import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 /* Constants class holds static variables that are referrenced in other classes
  * This class should not have any functions or other purposes
  * 
@@ -48,18 +45,18 @@ public final class Constants {
 
     // SPARK MAX motor controller CAN Ids 
     // Driving motors
-    public static final int kFrontLeftDrivingCanId = 8;
-    public static final int kRearLeftDrivingCanId = 2;
-    public static final int kFrontRightDrivingCanId = 6;
-    public static final int kRearRightDrivingCanId = 4;
+    public static final int kFrontLeftDrivingCanId = 4;//8;
+    public static final int kRearLeftDrivingCanId = 6;//2;
+    public static final int kFrontRightDrivingCanId = 2;//6;
+    public static final int kRearRightDrivingCanId = 8;//4;
     // Turning motors
-    public static final int kFrontLeftTurningCanId = 7;
-    public static final int kRearLeftTurningCanId = 1;
-    public static final int kFrontRightTurningCanId = 5;
-    public static final int kRearRightTurningCanId = 3;
+    public static final int kFrontLeftTurningCanId = 3;//7;
+    public static final int kRearLeftTurningCanId = 5;//1;
+    public static final int kFrontRightTurningCanId = 1;//5;
+    public static final int kRearRightTurningCanId = 7;//3;
 
     // Is gyro reversed?
-    public static final boolean kGyroReversed = false;
+    public static final boolean kGyroReversed = true;
   }
   public static final class ButtonBoardConstants{
     public static final int ReefID = 2;
@@ -156,8 +153,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3.0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
+    public static final double kMaxSpeedMetersPerSecond = 1.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -174,8 +171,8 @@ public final class Constants {
     public static final int ShooterID = 9;
     public static final int PassThroughID = 10;
 
-    public static final double ShooterPower = -0.2;
-    public static final double PassThroughPower = 0.4;
+    public static final double ShooterPower = -0.6;
+    public static final double PassThroughPower = 0.85;
   }
 
   public static final class NeoMotorConstants {

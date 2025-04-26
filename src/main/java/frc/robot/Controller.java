@@ -2,27 +2,21 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.OIConstants;
-// import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Sonar;
 
 public class Controller extends SubsystemBase{
 
-    Joystick m_joystick1 = new Joystick(0);//OIConstants.kDriverControllerPort);
+    Joystick m_joystick1 = new Joystick(0);
     Joystick m_joystick2 = new Joystick(OIConstants.kDriverControllerPort2);
-    ButtonBoard buttonBoard = new ButtonBoard();
     Limelight m_lime = new Limelight(DriveTrain.getInstance());
-    //XboxController m_operator = new XboxController(OIConstants.kDriverControllerPort3);
     boolean shouldRunBelt = true;
     boolean isPressed = false;
     boolean isBeltOn = false;
@@ -45,10 +39,10 @@ public class Controller extends SubsystemBase{
     }
     private double setSpeed() {
         if (m_joystick1.getRawButton(1) == true) {
-            return 9.0; // 9.0
+            return 2.0; // 9.0
         }
         else {
-            return 2.0; // 2.0
+            return 8.0; // 2.0
         }
     }
     public Controller (){
@@ -57,16 +51,16 @@ public class Controller extends SubsystemBase{
                   
                   ReturnValueFromMap(MathUtil.applyDeadband(m_joystick1.getY(), OIConstants.kDriveDeadband)) * setSpeed() , //m_operator.getRawAxis(3)
                   ReturnValueFromMap(MathUtil.applyDeadband(m_joystick1.getX(), OIConstants.kDriveDeadband)) * setSpeed() , // * m_sonar.getSpeed(sonarOn)
-                  (-MathUtil.applyDeadband(m_joystick2.getZ(), OIConstants.kDriveDeadband)) * 3.5,
+                  (-MathUtil.applyDeadband(m_joystick2.getZ(), OIConstants.kDriveDeadband)) * 3.25,
                   true, true),
               DriveTrain.getInstance()));
-        buttonBoard.SetupButtons();
+        //buttonBoard.SetupButtons();
         configureButtonBindings();
     }
 
     //configures all buttons
     private void configureButtonBindings(){
-        new JoystickButton(m_joystick2, Button.kR1.value)
+        new JoystickButton(m_joystick2, 12)
             .whileTrue(new RunCommand(
                 () -> DriveTrain.getInstance().setX(),
                 DriveTrain.getInstance()));
@@ -77,24 +71,21 @@ public class Controller extends SubsystemBase{
                 () -> DriveTrain.getInstance().zeroHeading(),
                 DriveTrain.getInstance()));
         new JoystickButton(m_joystick1, 3)
-            .whileTrue(Shooter.getInstance().shootTest(-0.45))
+            .whileTrue(Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower))
             .whileFalse(Shooter.getInstance().stopShoot());
 
+        new JoystickButton(m_joystick2, 6)
+            .onTrue(Climber.getInstance().actuator(0.0))
+            .onFalse(Climber.getInstance().actuator(1.0));
+
+        new JoystickButton(m_joystick2, 3)
+          .whileTrue(Climber.getInstance().climb());
+
+        new JoystickButton(m_joystick2, 4)
+          .whileTrue(Climber.getInstance().lower());
+
         new JoystickButton(m_joystick2, 5)
-            .whileTrue(new RunCommand(
-                () -> m_lime.alignDrive()
-            ));
-        // new JoystickButton(m_joystick1, 6)
-        //     .whileTrue(Shooter.getInstance().shootTest(0.3))
-        //     .whileFalse(Shooter.getInstance().stopShoot());
-        // new JoystickButton(m_joystick2, 3)
-        //   .whileTrue(Climber.getInstance().climb());
-
-        // new JoystickButton(m_joystick2, 4)
-        //   .whileTrue(Climber.getInstance().lower());
-
-        // new JoystickButton(m_joystick2, 5)
-        //     .whileTrue(Climber.getInstance().stop());  
+            .whileTrue(Climber.getInstance().stop());  
     }
     @Override
     public void periodic(){
@@ -117,7 +108,6 @@ public class Controller extends SubsystemBase{
         shouldRunBelt = false;
         isBeltOn = false;
         isPressed = false;
-        //Shooter.getInstance().stopPass().execute();
     }
     public void TurnOnBelt(){
         shouldRunBelt = true;

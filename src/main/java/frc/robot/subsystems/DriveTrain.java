@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 // Imports
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -11,15 +12,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.Constants.DriveConstants;
-import frc.robot.Constants.Constants.ModuleConstants;
 import frc.robot.utils.SwerveUtils;
 // Position imports
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
@@ -74,10 +70,7 @@ public class DriveTrain extends SubsystemBase {
   private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
-  //private final int x;
   private static RobotConfig config;
-  // public static RobotConfig config; 
-  // RobotConfig config;
 
   /* Odemetry tracks the robot pose utilizing the gyro
    * mainly used for field relativity
@@ -100,11 +93,8 @@ public class DriveTrain extends SubsystemBase {
 
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
-
-    // RobotConfig config;
     
     try{
-      // RobotConfig config = new RobotConfig.fromGUISettings();
       config = RobotConfig.fromGUISettings();
       AutoBuilder.configure(
       this::getPose, // Robot pose supplier
@@ -116,20 +106,11 @@ public class DriveTrain extends SubsystemBase {
                     new PIDConstants(4.5, 0.0, 0.2,  0.0), // Translation PID constants P between 5 and 6
                     new PIDConstants(2.5, 0.0, 0.3, 0.0) // Rotation PID constants
             ),
-      // new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-      //               new PIDConstants(0.0, 0.0, 0.5, 0.0), // Translation PID constants P between 5 and 6
-      //               new PIDConstants(0, 0.0, 0.5, 0) // Rotation PID constants
-      //       ),
       config, // The robot configuration
       () -> {
         // Boolean supplier that controls when the path will be mirrored for the red alliance
         // This will flip the path being followed to the red side of the field.
         // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-        // var alliance = DriverStation.getAlliance();
-        // if (alliance.isPresent()) {
-        //   return alliance.get() == DriverStation.Alliance.Red;
-        // }
         return true;
       },
       this // Reference to this subsystem to set requirements
@@ -159,11 +140,7 @@ public class DriveTrain extends SubsystemBase {
      return m_odometry.getPoseMeters();
    }
 
-//   public Rotation2d getRotation2d() {
-//     return Rotation2d.fromDegrees(getHeading());
-//   }
-
-//   // Resets odometry to a specific pose
+// Resets odometry to a specific pose
   public void resetOdometry(Pose2d pose) {
       m_odometry.resetPosition(
          Rotation2d.fromDegrees(m_navx.getAngle()),
@@ -243,19 +220,6 @@ public class DriveTrain extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
-    /*
-    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(m_navx.getAngle()))
-            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_rearLeft.setDesiredState(swerveModuleStates[2]);
-    m_rearRight.setDesiredState(swerveModuleStates[3]);
-    */
-
     ChassisSpeeds chassisSpeeds;
         if (fieldRelative = true) {
             // Relative to field
@@ -318,6 +282,10 @@ public class DriveTrain extends SubsystemBase {
   // Zeros robot heading
   public void zeroHeading() {
     m_navx.reset();
+  }
+
+  public Command zeroAuotHeading() {
+    return run(() -> m_navx.reset());
   }
 
   /* Returns the heading of the robot

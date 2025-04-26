@@ -3,32 +3,20 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import com.ctre.phoenix.led.CANdle;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import frc.robot.subsystems.DriveTrain;
 import frc.robot.enums.RobotMode;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Sonar;
-
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -116,6 +104,8 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    DriveTrain.getInstance().zeroHeading();
+
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -140,17 +130,16 @@ public class Robot extends LoggedRobot {
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
-    // this line or comment it out.
+    // this line or comment it out.\
+    
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    //candle.setLEDs(0, 255, 0);
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //candle.setLEDs(0, 255 , 0);
     
     if(SetToCorrectPosition){
       if(!Shooter.getInstance().isLaunched){
@@ -162,17 +151,14 @@ public class Robot extends LoggedRobot {
     }
     else {
       if(Sonar.getInstance().checkSonar()){
-        System.out.println("broken");
         SetToCorrectPosition = true;
         Shooter.getInstance().isLaunched = false;
         m_robotContainer.controller.TurnOffBelt();
       }
       else{
-        System.out.println("not broken");
         m_robotContainer.controller.TurnOnBelt();
       }
     }
-    //System.out.println(DriveTrain.getInstance().getHeading());
   }
 
   @Override

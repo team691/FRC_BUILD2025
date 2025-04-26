@@ -2,17 +2,10 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Controller;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANrange;
-
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public class Sonar extends SubsystemBase {
@@ -34,7 +27,7 @@ public class Sonar extends SubsystemBase {
         // Get the StatusSignal value
         StatusSignal<Distance> distance = canRangeFinder.getDistance();
         distanceCentimeters = distance.getValueAsDouble() * conversionFactor;
-        //System.out.println(distanceCentimeters);
+        System.out.println(distanceCentimeters);
     }
 
     public boolean checkSonar() {
