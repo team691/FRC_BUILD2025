@@ -59,3 +59,64 @@
 //         return false;//limelight.getForwardDistance() < TARGET_DISTANCE;
 //     }
 // }
+
+package frc.robot.commands;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.LimelightHelpers;
+import edu.wpi.first.wpilibj2.command.Command;
+
+public class AutoAlign extends Command {
+    public Limelight m_lime = new Limelight(DriveTrain.getInstance());
+    private static final AutoAlign m_autoalign = new AutoAlign();
+    public static AutoAlign getInstance() {return m_autoalign;}
+
+    double targetX = 0.5; // meters (forward)
+    double targetY = 0.0; // meters (sideways)
+    double targetYaw = 0.0; // degrees
+    
+    public AutoAlign() {
+        addRequirements(DriveTrain.getInstance());
+    }
+
+    public void execute() {
+        LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+
+        if (pose.tagCount > 1) {
+
+            double errorX = pose.pose.getX() - targetX;
+            double errorY = pose.pose.getY() - targetY;
+            double errorYaw = pose.pose.getRotation().getDegrees() - targetYaw;
+
+            // tune PID val
+            double kP = 1.0;
+            double driveCmd = -errorX * kP;
+            double strafeCmd = -errorY * kP;
+            double rotCmd = -errorYaw * kP;
+
+            DriveTrain.getInstance().drive(driveCmd, strafeCmd, rotCmd, false, true);
+
+            // minimize error
+            if (Math.abs(errorX) < 0.05 && Math.abs(errorY) < 0.05 && Math.abs(errorYaw) < 3.0) {
+                DriveTrain.getInstance().drive(0, 0, 0, false, true);
+            }
+        }
+    }
+
+    public boolean isFinished() {
+        LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        if (pose.tagCount < 1) {
+            return false;
+        }
+
+        double errorX = Math.abs(pose.pose.getX() - 0.5);
+        double errorY = Math.abs(pose.pose.getY());
+        double errorYaw = Math.abs(pose.pose.getRotation().getDegrees());
+
+        return errorX < targetX && errorY < targetY && errorYaw < targetYaw;
+    }
+
+    public void end(boolean interrupted) {
+        DriveTrain.getInstance().drive(0, 0, 0, false, true);
+    }
+}

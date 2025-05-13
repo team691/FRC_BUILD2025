@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.OIConstants;
+import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
@@ -73,6 +74,9 @@ public class Controller extends SubsystemBase{
         new JoystickButton(m_joystick1, 3)
             .whileTrue(Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower))
             .whileFalse(Shooter.getInstance().stopShoot());
+
+        new JoystickButton(m_joystick1, 4)
+            .whileTrue(AutoAlign.getInstance()); // test
 
         new JoystickButton(m_joystick2, 6)
             .onTrue(Climber.getInstance().actuator(0.0))
