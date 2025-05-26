@@ -12,6 +12,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Elevator;
 
 public class Controller extends SubsystemBase{
 
@@ -71,12 +72,22 @@ public class Controller extends SubsystemBase{
             .whileTrue(new RunCommand(
                 () -> DriveTrain.getInstance().zeroHeading(),
                 DriveTrain.getInstance()));
+
         new JoystickButton(m_joystick1, 3)
             .whileTrue(Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower))
             .whileFalse(Shooter.getInstance().stopShoot());
 
         new JoystickButton(m_joystick1, 4)
-            .whileTrue(AutoAlign.getInstance()); // test
+            .whileTrue(AutoAlign.getInstance()); // TODO: test
+
+        new JoystickButton(m_joystick1, 7)
+            .onTrue(Elevator.getInstance().goLow());
+
+        new JoystickButton(m_joystick1, 8)
+            .onTrue(Elevator.getInstance().goMid());
+
+        new JoystickButton(m_joystick1, 9)
+            .onTrue(Elevator.getInstance().goHigh());
 
         new JoystickButton(m_joystick2, 6)
             .onTrue(Climber.getInstance().actuator(0.0))

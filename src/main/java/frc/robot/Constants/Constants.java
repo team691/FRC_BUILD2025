@@ -5,7 +5,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 // Imports
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.system.plant.DCMotor;
+// import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 /* Constants class holds static variables that are referrenced in other classes
@@ -84,6 +84,13 @@ public final class Constants {
       public static final int FarLeftWhite = 12;
     }
   }
+
+  public static final class ElevatorConstants {
+    public static final double LOW_POSITION = 1.0;  // example rotations
+    public static final double MID_POSITION = 2.5;
+    public static final double HIGH_POSITION = 4.0;
+  }
+
   public static final class ModuleConstants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
     // This changes the drive speed of the module (a pinion gear with more teeth will result in a
