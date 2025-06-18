@@ -60,6 +60,8 @@
 //     }
 // }
 
+// TODO: move out robotpose from autoalign once functional, think about more pose estimations/paths to do (automatic game piece pick up, pose-based decision logic, autonavigation with pathplanner, etc.)
+
 package frc.robot.commands;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
