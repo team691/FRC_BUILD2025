@@ -71,9 +71,11 @@ public class AutoAlign extends Command {
     private static final AutoAlign m_autoalign = new AutoAlign();
     public static AutoAlign getInstance() {return m_autoalign;}
 
-    double targetX = 0.5; // meters (forward)
-    double targetY = 0.0; // meters (sideways)
-    double targetYaw = 0.0; // degrees
+    private double[] targetPose = new double[6];
+
+    double desiredX = 0.5; // meters (forward)
+    double desiredY = 0.0; // meters (sideways)
+    double desiredYaw = 0.0; // degrees
     
     public AutoAlign() {
         addRequirements(DriveTrain.getInstance());
@@ -81,12 +83,13 @@ public class AutoAlign extends Command {
 
     public void execute() {
         LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        var targetPose = LimelightHelpers.getBotPose_TargetSpace("limelight"); 
+        // TODO: if necessary, calculate offset for limelight pose based on position
+        if (pose.tagCount >= 1) {
 
-        if (pose.tagCount > 1) {
-
-            double errorX = pose.pose.getX() - targetX;
-            double errorY = pose.pose.getY() - targetY;
-            double errorYaw = pose.pose.getRotation().getDegrees() - targetYaw;
+            double errorX = targetPose[0] - desiredX;
+            double errorY = targetPose[1] - desiredY;
+            double errorYaw = targetPose[5] - desiredYaw;
 
             // tune PID val
             double kP = 1.0;
@@ -94,12 +97,12 @@ public class AutoAlign extends Command {
             double strafeCmd = -errorY * kP;
             double rotCmd = -errorYaw * kP;
 
-            DriveTrain.getInstance().drive(driveCmd, strafeCmd, rotCmd, false, true);
-
             // minimize error
             if (Math.abs(errorX) < 0.05 && Math.abs(errorY) < 0.05 && Math.abs(errorYaw) < 3.0) {
-                DriveTrain.getInstance().drive(0, 0, 0, false, true);
+                driveCmd = strafeCmd = rotCmd = 0;
             }
+
+            DriveTrain.getInstance().drive(driveCmd, strafeCmd, rotCmd, false, true);            
         }
     }
 
@@ -109,11 +112,11 @@ public class AutoAlign extends Command {
             return false;
         }
 
-        double errorX = Math.abs(pose.pose.getX() - 0.5);
-        double errorY = Math.abs(pose.pose.getY());
-        double errorYaw = Math.abs(pose.pose.getRotation().getDegrees());
+        double errorX = Math.abs(targetPose[0] - desiredX);
+        double errorY = Math.abs(targetPose[1] - desiredY);
+        double errorYaw = Math.abs(targetPose[5] - desiredYaw);
 
-        return errorX < targetX && errorY < targetY && errorYaw < targetYaw;
+        return errorX < desiredX && errorY < desiredY && errorYaw < desiredYaw;
     }
 
     public void end(boolean interrupted) {

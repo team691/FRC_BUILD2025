@@ -78,7 +78,7 @@ public class Controller extends SubsystemBase{
             .whileFalse(Shooter.getInstance().stopShoot());
 
         new JoystickButton(m_joystick1, 4)
-            .whileTrue(AutoAlign.getInstance()); // TODO: test
+            .whileTrue(AutoAlign.getInstance());
 
         new JoystickButton(m_joystick1, 7)
             .onTrue(Elevator.getInstance().goLow());
