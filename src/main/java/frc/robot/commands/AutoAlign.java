@@ -64,16 +64,14 @@
 
 package frc.robot.commands;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.LimelightHelpers;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoAlign extends Command {
-    public Limelight m_lime = new Limelight(DriveTrain.getInstance());
     private static final AutoAlign m_autoalign = new AutoAlign();
     public static AutoAlign getInstance() {return m_autoalign;}
 
-    private double[] targetPose = new double[6];
+    // private double[] targetpose = new double[6];
 
     double desiredX = 0.5; // meters (forward)
     double desiredY = 0.0; // meters (sideways)
@@ -85,13 +83,13 @@ public class AutoAlign extends Command {
 
     public void execute() {
         LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        var targetPose = LimelightHelpers.getBotPose_TargetSpace("limelight"); 
+        double[] currPose = LimelightHelpers.getBotPose_TargetSpace("limelight"); 
         // TODO: if necessary, calculate offset for limelight pose based on position
         if (pose.tagCount >= 1) {
 
-            double errorX = targetPose[0] - desiredX;
-            double errorY = targetPose[1] - desiredY;
-            double errorYaw = targetPose[5] - desiredYaw;
+            double errorX = currPose[0] - desiredX;
+            double errorY = currPose[1] - desiredY;
+            double errorYaw = currPose[5] - desiredYaw;
 
             // tune PID val
             double kP = 1.0;
@@ -109,16 +107,18 @@ public class AutoAlign extends Command {
     }
 
     public boolean isFinished() {
-        LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        if (pose.tagCount < 1) {
+        LimelightHelpers.PoseEstimate currPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        double[] currentPose = LimelightHelpers.getBotPose_TargetSpace("limelight");
+
+        if (currPose.tagCount < 1) {
             return false;
         }
 
-        double errorX = Math.abs(targetPose[0] - desiredX);
-        double errorY = Math.abs(targetPose[1] - desiredY);
-        double errorYaw = Math.abs(targetPose[5] - desiredYaw);
+        double errorX = Math.abs(currentPose[0] - desiredX);
+        double errorY = Math.abs(currentPose[1] - desiredY);
+        double errorYaw = Math.abs(currentPose[5] - desiredYaw);
 
-        return errorX < desiredX && errorY < desiredY && errorYaw < desiredYaw;
+        return errorX < 0.05 && errorY < 0.05 && errorYaw < 3.0;
     }
 
     public void end(boolean interrupted) {
