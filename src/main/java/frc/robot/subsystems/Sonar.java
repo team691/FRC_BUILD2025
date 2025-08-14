@@ -27,7 +27,7 @@ public class Sonar extends SubsystemBase {
         // Get the StatusSignal value
         StatusSignal<Distance> distance = canRangeFinder.getDistance();
         distanceCentimeters = distance.getValueAsDouble() * conversionFactor;
-        System.out.println(distanceCentimeters);
+        // System.out.println(distanceCentimeters);
     }
 
     public boolean checkSonar() {

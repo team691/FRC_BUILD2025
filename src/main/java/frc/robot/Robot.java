@@ -8,11 +8,16 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.enums.RobotMode;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.LimelightHelpers;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Sonar;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -29,7 +34,7 @@ public class Robot extends LoggedRobot {
   public static final RobotMode CURRENT_ROBOT_MODE = isReal() ? RobotMode.REAL : JAVA_SIM_MODE;
   private boolean SetToCorrectPosition = false;
   private RobotContainer m_robotContainer;
-  
+  private final AHRS m_navx = new AHRS(NavXComType.kMXP_SPI);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -40,6 +45,10 @@ public class Robot extends LoggedRobot {
     // autonomous chooser on the dashboard. 
 
     // Set up data receivers & replay source
+    LimelightHelpers.setCameraPose_RobotSpace("limelight", 
+      0.5, 0.0, 0.5,  // forward, side, up (meters)
+      0.0, 30.0, 0.0  // roll, pitch, yaw (degrees)
+    );
     
         // Set up data receivers & replay source
         switch (CURRENT_ROBOT_MODE) {
@@ -78,11 +87,13 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
+    double robotYaw = m_navx.getYaw();
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     Logger.recordOutput("RobotPose", new Pose2d());
+    LimelightHelpers.SetRobotOrientation("limelight", robotYaw, 0.0, 0.0, 0.0, 0.0, 0.0);
     
     CommandScheduler.getInstance().run();
   }

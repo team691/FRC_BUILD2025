@@ -10,15 +10,17 @@ import frc.robot.Constants.Constants.OIConstants;
 import frc.robot.commands.AutoAlign;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Limelight;
+// import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Elevator;
+import frc.robot.commands.AlignToReefTagRelative;
 
 public class Controller extends SubsystemBase{
 
     Joystick m_joystick1 = new Joystick(0);
     Joystick m_joystick2 = new Joystick(OIConstants.kDriverControllerPort2);
-    Limelight m_lime = new Limelight(DriveTrain.getInstance());
+    // Limelight m_lime = new Limelight(DriveTrain.getInstance());
+
     boolean shouldRunBelt = true;
     boolean isPressed = false;
     boolean isBeltOn = false;
@@ -77,8 +79,9 @@ public class Controller extends SubsystemBase{
             .whileTrue(Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower))
             .whileFalse(Shooter.getInstance().stopShoot());
 
-        new JoystickButton(m_joystick1, 4)
-            .whileTrue(new AutoAlign());
+        new JoystickButton(m_joystick1, 10)
+            .whileTrue(new AlignToReefTagRelative(true, DriveTrain.getInstance()));
+        //     // .whileFalse(new AlignToReefTagRelative(false, DriveTrain.getInstance()));
 
         new JoystickButton(m_joystick1, 7)
             .onTrue(Elevator.getInstance().goLow());
