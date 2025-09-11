@@ -23,6 +23,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import frc.robot.subsystems.Shooter;
 
 
 public class AlignToReefTagRelative extends Command {
@@ -138,6 +139,11 @@ public class AlignToReefTagRelative extends Command {
 
      drivebase.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false, false);
 
+     if (tagID == 7.0) {
+      Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower);
+     }
+
+     Shooter.getInstance().stopShoot();
 
      if (!rotController.atSetpoint() ||
          !yController.atSetpoint() ||
