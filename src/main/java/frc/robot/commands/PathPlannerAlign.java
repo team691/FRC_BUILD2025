@@ -24,7 +24,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
-public class AlignToReefTagRelative extends Command {
+public class PathPlannerAlign extends Command {
  private PIDController xController, yController, rotController;
  private ProfiledPIDController thetaController;
  private boolean isRightScore;
@@ -34,7 +34,7 @@ public class AlignToReefTagRelative extends Command {
  private HolonomicDriveController driveController;
 
 
- public AlignToReefTagRelative(boolean isRightScore, DriveTrain drivebase) {
+ public PathPlannerAlign(boolean isRightScore, DriveTrain drivebase) {
    xController = new PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
    yController = new PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
    rotController = new PIDController(Constants.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation

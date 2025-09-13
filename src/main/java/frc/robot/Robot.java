@@ -9,10 +9,14 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.enums.RobotMode;
@@ -43,6 +47,10 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard. 
+    if (DriverStation.getAlliance().isPresent()) {
+      //Note: Add code to send path to Shuffleboard as per the Alliance color and location
+      // SmartDashboard.putData();
+    }
 
     // Set up data receivers & replay source
     LimelightHelpers.setCameraPose_RobotSpace("limelight", 
@@ -78,6 +86,7 @@ public class Robot extends LoggedRobot {
     
     Logger.start();
   }
+
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -195,3 +204,6 @@ public class Robot extends LoggedRobot {
      m_robotContainer.updateSimulation();
  }
 }
+
+// ping 172.22.11.2
+// ping roborio-691-FRC.local
