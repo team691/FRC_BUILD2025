@@ -23,9 +23,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.robot.subsystems.Shooter;
 
-public class AlignToReefTagRelative extends Command {
+public class PathPlannerAlign extends Command {
  private PIDController xController, yController, rotController;
  private ProfiledPIDController thetaController;
  private boolean isRightScore;
@@ -35,13 +34,13 @@ public class AlignToReefTagRelative extends Command {
  private HolonomicDriveController driveController;
 
 
- public AlignToReefTagRelative(boolean isRightScore, DriveTrain drivebase) {
-   xController = new PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0.0);  // Vertical movement
-   yController = new PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0.0);  // Horitontal movement
-  //  rotController = new PIDController(Constants.ROT_REEF_ALIGNMENT_P, 0.0, 0.0);  // Rotation
+ public PathPlannerAlign(boolean isRightScore, DriveTrain drivebase) {
+   xController = new PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
+   yController = new PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
+   rotController = new PIDController(Constants.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
 
 
-   thetaController = new ProfiledPIDController(Constants.ROT_REEF_ALIGNMENT_P, 0.0, 0.0, new TrapezoidProfile.Constraints(Math.PI,  Math.PI)); // set null for testing asw
+   thetaController = new ProfiledPIDController(Constants.ROT_REEF_ALIGNMENT_P, 0, 0, new TrapezoidProfile.Constraints(Math.PI,  Math.PI)); // set null for testing asw
    thetaController.enableContinuousInput(-Math.PI, Math.PI);
    driveController = new HolonomicDriveController(xController, yController, thetaController);
 
@@ -75,18 +74,18 @@ public class AlignToReefTagRelative extends Command {
    System.out.println("pls" + pls);
 
 
-  //  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-  //  for (RawFiducial fiducial : fiducials) {
-  //      int id = fiducial.id;                    // Tag ID
-  //      double txnc = fiducial.txnc;             // X offset (no crosshair)
-  //      double tync = fiducial.tync;             // Y offset (no crosshair)
-  //      double ta = fiducial.ta;                 // Target area
-  //      double distToCamera = fiducial.distToCamera;  // Distance to camera
-  //      double distToRobot = fiducial.distToRobot;    // Distance to robot
-  //      double ambiguity = fiducial.ambiguity;   // Tag pose ambiguity
-  //      System.out.print("test");
-  //      System.out.print("id" + id);
-  //  }
+   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+   for (RawFiducial fiducial : fiducials) {
+       int id = fiducial.id;                    // Tag ID
+       double txnc = fiducial.txnc;             // X offset (no crosshair)
+       double tync = fiducial.tync;             // Y offset (no crosshair)
+       double ta = fiducial.ta;                 // Target area
+       double distToCamera = fiducial.distToCamera;  // Distance to camera
+       double distToRobot = fiducial.distToRobot;    // Distance to robot
+       double ambiguity = fiducial.ambiguity;   // Tag pose ambiguity
+       System.out.print("test");
+       System.out.print("id" + id);
+   }
  }
 
 
@@ -138,11 +137,6 @@ public class AlignToReefTagRelative extends Command {
 
      drivebase.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false, false);
 
-     if (tagID == 7.0) {
-      Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower);
-     }
-
-     Shooter.getInstance().stopShoot();
 
      if (!rotController.atSetpoint() ||
          !yController.atSetpoint() ||

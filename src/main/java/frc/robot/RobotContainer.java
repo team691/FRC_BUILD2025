@@ -18,6 +18,8 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Shooter;
 import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.Configs;
 import frc.robot.enums.RobotMode;
@@ -105,7 +107,8 @@ public class RobotContainer {
             }
         }
 
-      SmartDashboard.putData("Auto Chooser", m_chooser);
+        SmartDashboard.putData("Auto Chooser", m_chooser);
+
       // Add PathPlanner autonomous
       new EventTrigger("Shoot").whileTrue(Shooter.getInstance().shootTest(-0.50));
       
@@ -132,7 +135,6 @@ public class RobotContainer {
   }
   /* 
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
