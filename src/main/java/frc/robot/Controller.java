@@ -84,7 +84,8 @@ public class Controller extends SubsystemBase{
             .whileFalse(Shooter.getInstance().stopShoot());
 
         new JoystickButton(m_joystick1, 10)
-            .whileTrue(new AlignToReefTagRelative(true, DriveTrain.getInstance()));
+            // .whileTrue(new AlignToReefTagRelative(true, DriveTrain.getInstance()));
+            .whileTrue(new AutoAlign(true, DriveTrain.getInstance()));
         //     // .whileFalse(new AlignToReefTagRelative(false, DriveTrain.getInstance()));
 
         new JoystickButton(m_joystick1, 7)

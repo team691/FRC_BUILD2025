@@ -1,136 +1,116 @@
-// package frc.robot.commands;
-
-// import edu.wpi.first.wpilibj2.command.Command;
-// import frc.robot.subsystems.DriveTrain;
-// import frc.robot.subsystems.Limelight;
-
-
-// public class AutoAlign extends Command {
-   
-//     // Constants for PID tuning
-//     private static final double kP_Yaw = 0.02; // Adjust for yaw correction
-//     private static final double kP_Forward = 0.1; // Adjust for forward movement
-//     private static final double kP_Strafe = 0.05; // Adjust for strafe correction
-//     private static final double TARGET_DISTANCE = 0.5; // Stop at 0.5 meters from the tag
-
-//     public AutoAlign() {
-//         addRequirements(DriveTrain.getInstance());
-//     }
-
-//     @Override
-//     public void execute() {
-//         if (Limelight.getInstance().hasValidTarget()) {
-//             // Get data from Limelight
-//             double yawError = Limelight.getInstance().getYawError(); // Horizontal alignment
-//             double forwardDistance = Limelight.getInstance().getForwardDistance(); // Distance to target
-//             double strafeDistance = Limelight.getInstance().getStrafeDistance(); // Side alignment
-//             // System.out.println("YawError: " + yawError + " Foward Dis: " +
-//             //  forwardDistance + " StrafeDistance: " + strafeDistance);
-            
-
-//             // PID-based corrections
-//             double rotationSpeed = -yawError * kP_Yaw;
-//             double forwardSpeed = (forwardDistance > TARGET_DISTANCE) ? forwardDistance * kP_Forward : 0.0;
-//             double strafeSpeed = -strafeDistance * kP_Strafe; // Strafe correction
-
-
-//             // Drive the robot with swerve adjustments
-//             //driveTrain.drive(forwardSpeed, strafeSpeed, rotationSpeed, true, false);
-//         } else {
-//             // No target detected, stop moving
-//             System.out.println("Can't See");
-//             //driveTrain.drive(0.0, 0.0, 0.0, true, false);
-//         }
-//     }
-
-//     public void cancel(){
-//         DriveTrain.getInstance().drive(0.0, 0.0, 0.0, true, false);
-//     }
-//     @Override
-//     public void end(boolean interrupted) {
-//         // Stop the drivetrain when toggled off
-//         DriveTrain.getInstance().drive(0.0, 0.0, 0.0, true, false);
-//     }
-
-
-//     @Override
-//     public boolean isFinished() {
-//         // Stop when within target distance
-//         return false;//limelight.getForwardDistance() < TARGET_DISTANCE;
-//     }
-// }
-
-// TODO: move out robotpose from autoalign once functional, think about more pose estimations/paths to do (automatic game piece pick up, pose-based decision logic, autonavigation with pathplanner, etc.)
-
 package frc.robot.commands;
-import frc.robot.subsystems.DriveTrain;
-// import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.LimelightHelpers;
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Constants;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.LimelightHelpers;
+import frc.robot.subsystems.LimelightHelpers.PoseEstimate;
+import frc.robot.subsystems.Shooter;
 
 public class AutoAlign extends Command {
-    private static final AutoAlign m_autoalign = new AutoAlign();
-    public static AutoAlign getInstance() {return m_autoalign;}
+    private final DriveTrain drivebase;
+    private final boolean isRightScore;
+    private final HolonomicDriveController driveController;
+    private final ProfiledPIDController thetaController;
 
-    // private double[] targetpose = new double[6];
+    private final Timer stopTimer = new Timer();
+    private final Timer tagLostTimer = new Timer();
 
-    double desiredX = 0.5; // meters (forward)
-    double desiredY = 0.0; // meters (sideways)
-    double desiredYaw = 0.0; // degrees
-    
-    public AutoAlign() {
-        addRequirements(DriveTrain.getInstance());
+    public AutoAlign(boolean isRightScore, DriveTrain drivebase) {
+        this.drivebase = drivebase;
+        this.isRightScore = isRightScore;
+
+        thetaController = new ProfiledPIDController(
+            Constants.ROT_REEF_ALIGNMENT_P, 0.0, 0.0,
+            new TrapezoidProfile.Constraints(Math.PI, Math.PI)
+        );
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        driveController = new HolonomicDriveController(
+            new edu.wpi.first.math.controller.PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0.0),
+            new edu.wpi.first.math.controller.PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0.0),
+            thetaController
+        );
+
+        addRequirements(drivebase);
     }
 
+    @Override
+    public void initialize() {
+        stopTimer.reset();
+        stopTimer.start();
+        tagLostTimer.reset();
+        tagLostTimer.start();
+    }
+
+    @Override
     public void execute() {
-        LimelightHelpers.RawFiducial[] tags = LimelightHelpers.getRawFiducials("limelight");
-        for (var tag : tags) {
-            System.out.println("Tag ID: " + tag.id + ", Ambiguity: " + tag.ambiguity);
+        if (!LimelightHelpers.getTV("limelight")) {
+            // No tag seen
+            drivebase.drive(0, 0, 0, false, false);
+            return;
         }
-        LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight");
-        double[] currPose = LimelightHelpers.getBotPose_TargetSpace("limelight"); 
-        // TODO: if necessary, calculate offset for limelight pose based on position
-        if (pose != null && pose.tagCount >= 1) {
 
-            double errorX = currPose[0] - desiredX;
-            double errorY = currPose[1] - desiredY;
-            double errorYaw = currPose[5] - desiredYaw;
+        tagLostTimer.reset();  // reset lost tag timer because we see a tag
 
-            // tune PID val
-            double kP = 1.0;
-            double driveCmd = -errorX * kP;
-            double strafeCmd = -errorY * kP;
-            double rotCmd = -errorYaw * kP;
+        // Use robot pose relative to target — more stable
+        PoseEstimate currentPose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
-            // minimize error
-            if (Math.abs(errorX) < 0.05 && Math.abs(errorY) < 0.05 && Math.abs(errorYaw) < 3.0) {
-                driveCmd = strafeCmd = rotCmd = 0;
-            }
+        // Target pose is fixed relative to tag
+        Pose2d targetPose = new Pose2d(
+            Constants.X_SETPOINT_REEF_ALIGNMENT,
+            isRightScore ? Constants.Y_SETPOINT_REEF_ALIGNMENT : -Constants.Y_SETPOINT_REEF_ALIGNMENT,
+            Rotation2d.fromDegrees(Constants.ROT_SETPOINT_REEF_ALIGNMENT)
+        );
 
-            DriveTrain.getInstance().drive(driveCmd, strafeCmd, rotCmd, false, true);            
+        Trajectory.State dummyState = new Trajectory.State(0, 0, 0, targetPose, 0);
+
+        ChassisSpeeds speeds = driveController.calculate(currentPose.pose, dummyState, targetPose.getRotation());
+
+        drivebase.drive(
+            speeds.vxMetersPerSecond,
+            speeds.vyMetersPerSecond,
+            speeds.omegaRadiansPerSecond,
+            false,
+            false
+        );
+
+        SmartDashboard.putNumber("AlignTimer", stopTimer.get());
+
+        // If aligned to Tag ID 7 and all controllers are within tolerance, shoot
+        double visibleID = LimelightHelpers.getFiducialID("limelight");
+
+        boolean aligned = driveController.atReference();
+        if (aligned && visibleID == 7) {
+            Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower);
+        } else {
+            Shooter.getInstance().stopShoot();
+        }
+
+        // Reset stop timer if not aligned
+        if (!aligned) {
+            stopTimer.reset();
         }
     }
 
-    // @SuppressWarnings("unused")
-    public boolean isFinished() {
-        LimelightHelpers.PoseEstimate currPose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        double[] currentPose = LimelightHelpers.getBotPose_TargetSpace("limelight");
-        System.out.println(currPose);
-
-        if (currPose == null || currPose.tagCount < 1) {
-            System.out.println(currPose);
-            return false;
-        }
-        System.out.println(currPose);
-        double errorX = Math.abs(currentPose[0] - desiredX);
-        double errorY = Math.abs(currentPose[1] - desiredY);
-        double errorYaw = Math.abs(currentPose[5] - desiredYaw);
-
-        return errorX < 0.05 && errorY < 0.05 && errorYaw < 3.0;        
-        // return true;
-    }
-
+    @Override
     public void end(boolean interrupted) {
-        DriveTrain.getInstance().drive(0, 0, 0, false, true);
+        drivebase.drive(0, 0, 0, false, false);
+        Shooter.getInstance().stopShoot();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return tagLostTimer.hasElapsed(Constants.DONT_SEE_TAG_WAIT_TIME)
+            || stopTimer.hasElapsed(Constants.POSE_VALIDATION_TIME);
     }
 }

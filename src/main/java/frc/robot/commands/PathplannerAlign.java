@@ -74,18 +74,18 @@ public class PathPlannerAlign extends Command {
    System.out.println("pls" + pls);
 
 
-   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-   for (RawFiducial fiducial : fiducials) {
-       int id = fiducial.id;                    // Tag ID
-       double txnc = fiducial.txnc;             // X offset (no crosshair)
-       double tync = fiducial.tync;             // Y offset (no crosshair)
-       double ta = fiducial.ta;                 // Target area
-       double distToCamera = fiducial.distToCamera;  // Distance to camera
-       double distToRobot = fiducial.distToRobot;    // Distance to robot
-       double ambiguity = fiducial.ambiguity;   // Tag pose ambiguity
-       System.out.print("test");
-       System.out.print("id" + id);
-   }
+  //  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+  //  for (RawFiducial fiducial : fiducials) {
+  //      int id = fiducial.id;                    // Tag ID
+  //      double txnc = fiducial.txnc;             // X offset (no crosshair)
+  //      double tync = fiducial.tync;             // Y offset (no crosshair)
+  //      double ta = fiducial.ta;                 // Target area
+  //      double distToCamera = fiducial.distToCamera;  // Distance to camera
+  //      double distToRobot = fiducial.distToRobot;    // Distance to robot
+  //      double ambiguity = fiducial.ambiguity;   // Tag pose ambiguity
+  //      System.out.print("test");
+  //      System.out.print("id" + id);
+  //  }
  }
 
 
