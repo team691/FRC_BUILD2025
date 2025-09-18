@@ -23,12 +23,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.Shooter;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 
-public class PathplannerAlign extends Command {
+public class PathPlannerAlign extends Command {
  private PIDController xController, yController, rotController;
  private ProfiledPIDController thetaController;
  private boolean isRightScore;
@@ -38,7 +34,7 @@ public class PathplannerAlign extends Command {
  private HolonomicDriveController driveController;
 
 
- public PathplannerAlign(boolean isRightScore, DriveTrain drivebase) {
+ public PathPlannerAlign(boolean isRightScore, DriveTrain drivebase) {
    xController = new PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
    yController = new PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
    rotController = new PIDController(Constants.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
@@ -118,20 +114,29 @@ public class PathplannerAlign extends Command {
      );
 
 
-     PathConstraints constraints = new PathConstraints(
-        3.0, 4.0,
-        Units.degreesToRadians(480), Units.degreesToRadians(720)
+     Trajectory.State targetState = new Trajectory.State(
+       0.0,
+       0.0,
+       0.0,
+       targetPose,
+       0.0
      );
 
-     Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints);
 
-     // double xSpeed = xController.calculate(postions[2]);
-     // SmartDashboard.putNumber("xspeed", xSpeed);
-     // double ySpeed = -yController.calculate(postions[0]);
-     // double rotValue = -rotController.calculate(postions[4]);
+     ChassisSpeeds speeds = driveController.calculate(currentPose, targetState, targetPose.getRotation());
 
 
-     // drivebase.drive(xSpeed, ySpeed, rotValue, false, false);
+     double xSpeed = xController.calculate(postions[2]);
+     SmartDashboard.putNumber("xspeed", xSpeed);
+     double ySpeed = -yController.calculate(postions[0]);
+     double rotValue = -rotController.calculate(postions[4]);
+
+
+    //  drivebase.drive(xSpeed, ySpeed, rotValue, false, false);
+
+
+     drivebase.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false, false);
+
 
      if (!rotController.atSetpoint() ||
          !yController.atSetpoint() ||
