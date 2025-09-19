@@ -16,6 +16,9 @@ import frc.robot.Constants.Constants;
 import frc.robot.subsystems.LimelightHelpers;
 import frc.robot.subsystems.LimelightHelpers.RawFiducial;
 import frc.robot.subsystems.DriveTrain;
+
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
+
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,143 +28,55 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class PathplannerAlign extends Command {
- private PIDController xController, yController, rotController;
+ private PIDController xController, yController;
  private ProfiledPIDController thetaController;
  private boolean isRightScore;
  private Timer dontSeeTagTimer, stopTimer;
  private DriveTrain drivebase;
  private double tagID = -1;
  private HolonomicDriveController driveController;
+ private PathPlannerTrajectoryState goalState;
+ private Pose2d goalPose;
 
-
- public PathplannerAlign(boolean isRightScore, DriveTrain drivebase) {
-   xController = new PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
-   yController = new PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
-   rotController = new PIDController(Constants.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
-
-
-   thetaController = new ProfiledPIDController(Constants.ROT_REEF_ALIGNMENT_P, 0, 0, new TrapezoidProfile.Constraints(Math.PI,  Math.PI)); // set null for testing asw
-   thetaController.enableContinuousInput(-Math.PI, Math.PI);
-   driveController = new HolonomicDriveController(xController, yController, thetaController);
-
-
-   this.isRightScore = isRightScore;
-   this.drivebase = drivebase;
-   addRequirements(drivebase);
+ public PathplannerAlign() {
+    xController = new PIDController(Constants.X_REEF_ALIGNMENT_P, 0.0, 0.0);  // Vertical movement
+    yController = new PIDController(Constants.Y_REEF_ALIGNMENT_P, 0.0, 0.0);  // Horitontal movement
+    thetaController = new ProfiledPIDController(Constants.ROT_REEF_ALIGNMENT_P, 0.0, 0.0, new TrapezoidProfile.Constraints(Math.PI,  Math.PI)); // set null for testing asw
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    driveController = new HolonomicDriveController(xController, yController, thetaController);
  }
-  @Override
+
+ @Override
  public void initialize() {
-   this.stopTimer = new Timer();
-   this.stopTimer.start();
-   this.dontSeeTagTimer = new Timer();
-   this.dontSeeTagTimer.start();
+    tagID = LimelightHelpers.getFiducialID("limelight");
 
-
-   rotController.setSetpoint(Constants.ROT_SETPOINT_REEF_ALIGNMENT);
-   rotController.setTolerance(Constants.ROT_TOLERANCE_REEF_ALIGNMENT);
-
-
-   xController.setSetpoint(Constants.X_SETPOINT_REEF_ALIGNMENT);
-   xController.setTolerance(Constants.X_TOLERANCE_REEF_ALIGNMENT);
-
-
-   yController.setSetpoint(isRightScore ? Constants.Y_SETPOINT_REEF_ALIGNMENT : -Constants.Y_SETPOINT_REEF_ALIGNMENT);
-   yController.setTolerance(Constants.Y_TOLERANCE_REEF_ALIGNMENT);
-
-
-   tagID = LimelightHelpers.getFiducialID("limelight");
-   double pls = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-   System.out.println("pls" + pls);
-
-
-   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-   for (RawFiducial fiducial : fiducials) {
-       int id = fiducial.id;                    // Tag ID
-       double txnc = fiducial.txnc;             // X offset (no crosshair)
-       double tync = fiducial.tync;             // Y offset (no crosshair)
-       double ta = fiducial.ta;                 // Target area
-       double distToCamera = fiducial.distToCamera;  // Distance to camera
-       double distToRobot = fiducial.distToRobot;    // Distance to robot
-       double ambiguity = fiducial.ambiguity;   // Tag pose ambiguity
-       System.out.print("test");
-       System.out.print("id" + id);
-   }
  }
-
 
  @Override
  public void execute() {
-   if (LimelightHelpers.getTV("limelight") && LimelightHelpers.getFiducialID("limelight") == tagID) {
-     this.dontSeeTagTimer.reset();
+    double[] positions = LimelightHelpers.getBotPose_TargetSpace("limelight");
 
+    Pose2d currentPose = new Pose2d(positions[0], positions[2], Rotation2d.fromDegrees(positions[4]));
 
-     double[] postions = LimelightHelpers.getBotPose_TargetSpace("limelight");
-     SmartDashboard.putNumber("x", postions[2]);
-     System.out.println("x" + postions[2]);
+    goalState = new PathPlannerTrajectoryState();
+    goalPose = goalState.pose;
 
+    // TODO: configure SwerveDriveOdometry + SwerveDrivePoseEstimator for real time robot pose update
 
-     Pose2d currentPose = new Pose2d(
-       postions[0],
-       postions[2],
-       Rotation2d.fromDegrees(postions[4])
-     );
+    // DriveTrain.getInstance().drive(
 
+    // )
 
-     Pose2d targetPose = new Pose2d(
-       isRightScore ? Constants.Y_SETPOINT_REEF_ALIGNMENT : -Constants.Y_SETPOINT_REEF_ALIGNMENT,
-       Constants.X_SETPOINT_REEF_ALIGNMENT,
-       Rotation2d.fromDegrees(Constants.ROT_SETPOINT_REEF_ALIGNMENT)
-     );
-
-
-     Trajectory.State targetState = new Trajectory.State(
-       0.0,
-       0.0,
-       0.0,
-       targetPose,
-       0.0
-     );
-
-
-     ChassisSpeeds speeds = driveController.calculate(currentPose, targetState, targetPose.getRotation());
-
-
-     double xSpeed = xController.calculate(postions[2]);
-     SmartDashboard.putNumber("xspeed", xSpeed);
-     double ySpeed = -yController.calculate(postions[0]);
-     double rotValue = -rotController.calculate(postions[4]);
-
-
-    //  drivebase.drive(xSpeed, ySpeed, rotValue, false, false);
-
-
-     drivebase.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false, false);
-
-
-     if (!rotController.atSetpoint() ||
-         !yController.atSetpoint() ||
-         !xController.atSetpoint()) {
-       stopTimer.reset();
-     }
-   } else {
-     drivebase.drive(0.0, 0.0, 0, false, false);
-   }
-
-
-   SmartDashboard.putNumber("poseValidTimer", stopTimer.get());
+    // TODO: use pathFindToPosition method in PathPlanner to generate path from current robot pose to apriltag pose, use PPSwerveController to execute path
  }
-
 
  @Override
  public void end(boolean interrupted) {
-   drivebase.drive(0.0, 0.0, 0, false, false);
+    DriveTrain.getInstance().drive(0, 0, 0, false, false);
  }
-
 
  @Override
  public boolean isFinished() {
-   // Requires the robot to stay in the correct position for 0.3 seconds, as long as it gets a tag in the camera
-   return this.dontSeeTagTimer.hasElapsed(Constants.DONT_SEE_TAG_WAIT_TIME) ||
-       stopTimer.hasElapsed(Constants.POSE_VALIDATION_TIME);
+  return true;
  }
 }
