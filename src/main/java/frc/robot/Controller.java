@@ -42,11 +42,15 @@ public class Controller extends SubsystemBase{
         return index < 0 ? -PowerMap[(int)(-(index*100))] : PowerMap[(int)(index*100)];
     }
     private double setSpeed() {
+        double xspeed = 2.0;
         if (m_joystick1.getRawButton(1) == true) {
-            return 2.0; // 9.0
+            while (m_joystick1.getRawButton(1) == true) {
+                xspeed += 0.5;
+            }
+            return xspeed; // 2.0
         }
         else {
-            return 8.0; // 2.0
+            return 8.0; // 8.0
         }
     }
     public Controller (){
