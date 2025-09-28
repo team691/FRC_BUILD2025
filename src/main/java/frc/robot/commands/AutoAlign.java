@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.Constants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.LimelightHelpers;
 import frc.robot.subsystems.LimelightHelpers.PoseEstimate;
@@ -18,16 +19,19 @@ import frc.robot.subsystems.Shooter;
 
 public class AutoAlign extends Command {
     private final DriveTrain drivebase;
-    private final boolean isRightScore;
+    // private final boolean isRightScore;
     private final HolonomicDriveController driveController;
     private final ProfiledPIDController thetaController;
 
     private final Timer stopTimer = new Timer();
     private final Timer tagLostTimer = new Timer();
 
-    public AutoAlign(boolean isRightScore, DriveTrain drivebase) {
+    private static final AutoAlign m_align = new AutoAlign(DriveTrain.getInstance());
+    public static AutoAlign getInstance() {return m_align;}
+
+    public AutoAlign(DriveTrain drivebase) {
         this.drivebase = drivebase;
-        this.isRightScore = isRightScore;
+        // this.isRightScore = isRightScore;
 
         thetaController = new ProfiledPIDController(
             Constants.ROT_REEF_ALIGNMENT_P, 0.0, 0.0,
@@ -68,7 +72,7 @@ public class AutoAlign extends Command {
         // Target pose is fixed relative to tag
         Pose2d targetPose = new Pose2d(
             Constants.X_SETPOINT_REEF_ALIGNMENT,
-            isRightScore ? Constants.Y_SETPOINT_REEF_ALIGNMENT : -Constants.Y_SETPOINT_REEF_ALIGNMENT,
+            Constants.Y_SETPOINT_REEF_ALIGNMENT, //  : -Constants.Y_SETPOINT_REEF_ALIGNMENT
             Rotation2d.fromDegrees(Constants.ROT_SETPOINT_REEF_ALIGNMENT)
         );
 
