@@ -127,7 +127,7 @@ public class AlignToReefTagRelative extends Command {
      ChassisSpeeds speeds = driveController.calculate(currentPose, targetState, targetPose.getRotation());
 
 
-     double xSpeed = xController.calculate(postions[2]);
+     double xSpeed = -xController.calculate(postions[2]);
      SmartDashboard.putNumber("xspeed", xSpeed);
      double ySpeed = -yController.calculate(postions[0]);
      double rotValue = -rotController.calculate(postions[4]);
