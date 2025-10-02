@@ -75,18 +75,19 @@ public class AlignToReefTagRelative extends Command {
    System.out.println("pls" + pls);
 
 
-  //  RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
-  //  for (RawFiducial fiducial : fiducials) {
-  //      int id = fiducial.id;                    // Tag ID
-  //      double txnc = fiducial.txnc;             // X offset (no crosshair)
-  //      double tync = fiducial.tync;             // Y offset (no crosshair)
-  //      double ta = fiducial.ta;                 // Target area
-  //      double distToCamera = fiducial.distToCamera;  // Distance to camera
-  //      double distToRobot = fiducial.distToRobot;    // Distance to robot
-  //      double ambiguity = fiducial.ambiguity;   // Tag pose ambiguity
-  //      System.out.print("test");
-  //      System.out.print("id" + id);
-  //  }
+   RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight");
+   for (RawFiducial fiducial : fiducials) {
+       int id = fiducial.id;                    // Tag ID
+       double txnc = fiducial.txnc;             // X offset (no crosshair)
+       double tync = fiducial.tync;             // Y offset (no crosshair)
+       double ta = fiducial.ta;                 // Target area
+       double distToCamera = fiducial.distToCamera;  // Distance to camera
+       double distToRobot = fiducial.distToRobot;    // Distance to robot
+       double ambiguity = fiducial.ambiguity;   // Tag pose ambiguity
+       System.out.print("test");
+       System.out.print("id" + id);
+       System.out.println("distance " + distToCamera);
+   }
  }
 
 
@@ -122,12 +123,12 @@ public class AlignToReefTagRelative extends Command {
        targetPose,
        0.0
      );
-
+  
 
      ChassisSpeeds speeds = driveController.calculate(currentPose, targetState, targetPose.getRotation());
 
 
-     double xSpeed = -xController.calculate(postions[2]);
+     double xSpeed = xController.calculate(postions[2]);
      SmartDashboard.putNumber("xspeed", xSpeed);
      double ySpeed = -yController.calculate(postions[0]);
      double rotValue = -rotController.calculate(postions[4]);

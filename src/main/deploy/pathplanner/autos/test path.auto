@@ -11,12 +11,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
           "type": "wait",
           "data": {
             "waitTime": 3.0
@@ -38,12 +32,6 @@
           "type": "path",
           "data": {
             "pathName": "Test Path station to reef"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
           }
         },
         {
