@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Constants;
 import frc.robot.Constants.Constants.OIConstants;
 import frc.robot.commands.AutoAlign;
+import frc.robot.commands.Test;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 // import frc.robot.subsystems.Limelight;
@@ -87,6 +88,9 @@ public class Controller extends SubsystemBase{
             // .whileTrue(new AlignToReefTagRelative(true, DriveTrain.getInstance()));
             .whileTrue(AutoAlign.getInstance());
         //     // .whileFalse(new AlignToReefTagRelative(false, DriveTrain.getInstance()));
+
+        new JoystickButton(m_joystick1, 11)
+            .whileTrue(Test.getInstance());
 
         new JoystickButton(m_joystick1, 7)
             .onTrue(Elevator.getInstance().goLow());
