@@ -221,7 +221,7 @@ public class DriveTrain extends SubsystemBase {
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
     ChassisSpeeds chassisSpeeds;
-        if (fieldRelative = true) {
+        if (fieldRelative == true) {
             // Relative to field
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     xSpeed, ySpeed, rot, Rotation2d.fromDegrees(getHeading()));
@@ -242,8 +242,12 @@ public class DriveTrain extends SubsystemBase {
       m_rearRight.getState());
   }
 
-  public void driveRobotRelative(ChassisSpeeds speeds){
-    this.drive(speeds.vxMetersPerSecond,speeds.vyMetersPerSecond,speeds.omegaRadiansPerSecond,true, true);
+  // public void driveRobotRelative(ChassisSpeeds speeds){
+  //   this.drive(speeds.vxMetersPerSecond,speeds.vyMetersPerSecond,speeds.omegaRadiansPerSecond,true, true);
+  // }
+
+  public void driveRobotRelative(ChassisSpeeds speeds) {
+    this.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond, false, true);
   }
 
   /* Drive command, stop function

@@ -29,6 +29,8 @@ public class AutoAlign extends Command {
     private static final AutoAlign m_align = new AutoAlign(DriveTrain.getInstance());
     public static AutoAlign getInstance() {return m_align;}
 
+    // private double tagID = -1;
+
     public AutoAlign(DriveTrain drivebase) {
         this.drivebase = drivebase;
         // this.isRightScore = isRightScore;
@@ -54,6 +56,7 @@ public class AutoAlign extends Command {
         stopTimer.start();
         tagLostTimer.reset();
         tagLostTimer.start();
+        // tagID = LimelightHelpers.getFiducialID("limelight");
     }
 
     @Override
