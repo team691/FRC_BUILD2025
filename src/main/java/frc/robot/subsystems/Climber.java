@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class Climber extends SubsystemBase {
     private static final Climber m_climb = new Climber();
@@ -17,6 +18,8 @@ public class Climber extends SubsystemBase {
     private Climber() {
         tfmotor.setNeutralMode(NeutralModeValue.Brake);
         servo.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
+
+        Shuffleboard.getTab("MotorCurrent").add("Climber Motor", tfmotor);
     }
     public Command climb() {
         return run(() -> {

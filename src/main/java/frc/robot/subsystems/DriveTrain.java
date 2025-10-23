@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.WPIUtilJNI;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 // Swerve specific imports
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -90,7 +91,10 @@ public class DriveTrain extends SubsystemBase {
   private DriveTrain() {
     // All other subsystem initialization
     // ...
-
+    // Shuffleboard.getTab("SmartDashboard").add("Front Left Motors", m_frontLeft);
+    // Shuffleboard.getTab("SmartDashboard").add("Front Right Motors", m_frontRight);
+    // Shuffleboard.getTab("SmartDashboard").add("Rear Left Motors", m_rearLeft);
+    // Shuffleboard.getTab("SmartDashboard").add("Rear Right Motors", m_rearRight);
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     

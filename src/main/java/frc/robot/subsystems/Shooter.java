@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Constants;
@@ -20,7 +21,10 @@ public class Shooter extends SubsystemBase {
 
     private Shooter() {
         Shooter = new TalonFX(3);
-        PassThrough = new TalonFX(2);
+        PassThrough = new TalonFX(11);
+
+        Shuffleboard.getTab("MotorCurrent").add("Shooter Motor", Shooter);
+        Shuffleboard.getTab("MotorCurrent").add("Passthrough Motor", Shooter);
     }
 
     public boolean Score(){
@@ -34,7 +38,7 @@ public class Shooter extends SubsystemBase {
                 isLaunched = false;
                 break;
             case MoveForward:
-                PassThrough.set(0.85);
+                PassThrough.set(0.9);
                 double a = PassThrough.getPosition().getValueAsDouble();
                 if(a > 120){
                     Shooter.set(0);

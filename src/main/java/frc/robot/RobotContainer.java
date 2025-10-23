@@ -108,6 +108,8 @@ public class RobotContainer {
       SmartDashboard.putData("Auto Chooser", m_chooser);
       // Add PathPlanner autonomous
       new EventTrigger("Shoot").whileTrue(Shooter.getInstance().shootTest(-0.50));
+      new EventTrigger("Stop Shoot").whileTrue(Shooter.getInstance().stopShoot());
+      // new EventTrigger("Shoot").and(Shooter.getInstance().shootTest(-0.50)).;
       
       // Ignore controller warnings
       DriverStation.silenceJoystickConnectionWarning(true);

@@ -70,8 +70,13 @@ public class Controller extends SubsystemBase{
             .whileTrue(new RunCommand(
                 () -> DriveTrain.getInstance().zeroHeading(),
                 DriveTrain.getInstance()));
+
         new JoystickButton(m_joystick1, 3)
             .whileTrue(Shooter.getInstance().shootTest(Constants.ShooterConstants.ShooterPower))
+            .whileFalse(Shooter.getInstance().stopShoot());
+
+        new JoystickButton(m_joystick1, 5)
+            .whileTrue(Shooter.getInstance().shootTest(-Constants.ShooterConstants.ShooterPower))
             .whileFalse(Shooter.getInstance().stopShoot());
 
         new JoystickButton(m_joystick2, 6)
