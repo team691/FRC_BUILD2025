@@ -11,6 +11,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.commands.AutoAlign;
 
 public class Controller extends SubsystemBase{
 
@@ -90,8 +91,14 @@ public class Controller extends SubsystemBase{
           .whileTrue(Climber.getInstance().lower());
 
         new JoystickButton(m_joystick2, 5)
-            .whileTrue(Climber.getInstance().stop());  
+            .whileTrue(Climber.getInstance().stop());
+
+        new JoystickButton(m_joystick1, m_joystick1.getPOV(90))
+            .onTrue(new AutoAlign(true, DriveTrain.getInstance()).withTimeout(3));
     }
+    // m_joystick1.povRight().onTrue(new AlignToReefTagRelative(true, drivebase).withTimeout(3));
+	// m_joystick1.povLeft().onTrue(new AlignToReefTagRelative(false, drivebase).withTimeout(3));
+
     @Override
     public void periodic(){
         if(shouldRunBelt && !isPressed && m_joystick1.getRawButton(4)){

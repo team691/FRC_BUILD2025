@@ -1,61 +1,91 @@
-// package frc.robot.commands;
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-// import edu.wpi.first.wpilibj2.command.Command;
-// import frc.robot.subsystems.DriveTrain;
-// import frc.robot.subsystems.Limelight;
+package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Constants.AutoAlignConstants;
+import frc.robot.Constants.LimelightHelpers;
+import frc.robot.subsystems.DriveTrain;
 
-// public class AutoAlign extends Command {
-   
-//     // Constants for PID tuning
-//     private static final double kP_Yaw = 0.02; // Adjust for yaw correction
-//     private static final double kP_Forward = 0.1; // Adjust for forward movement
-//     private static final double kP_Strafe = 0.05; // Adjust for strafe correction
-//     private static final double TARGET_DISTANCE = 0.5; // Stop at 0.5 meters from the tag
+public class AutoAlign extends Command {
+  private PIDController xController, yController, rotController;
+  private boolean isRightScore;
+  private Timer dontSeeTagTimer, stopTimer;
+  private DriveTrain drivebase;
+  private double tagID = -1;
 
-//     public AutoAlign() {
-//         addRequirements(DriveTrain.getInstance());
-//     }
+  public AutoAlign(boolean isRightScore, DriveTrain drivebase) {
+    xController = new PIDController(AutoAlignConstants.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
+    yController = new PIDController(AutoAlignConstants.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
+    rotController = new PIDController(AutoAlignConstants.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
+    this.isRightScore = isRightScore;
+    this.drivebase = drivebase;
+    addRequirements(drivebase);
+  }
 
-//     @Override
-//     public void execute() {
-//         if (Limelight.getInstance().hasValidTarget()) {
-//             // Get data from Limelight
-//             double yawError = Limelight.getInstance().getYawError(); // Horizontal alignment
-//             double forwardDistance = Limelight.getInstance().getForwardDistance(); // Distance to target
-//             double strafeDistance = Limelight.getInstance().getStrafeDistance(); // Side alignment
-//             // System.out.println("YawError: " + yawError + " Foward Dis: " +
-//             //  forwardDistance + " StrafeDistance: " + strafeDistance);
-            
+  @Override
+  public void initialize() {
+    this.stopTimer = new Timer();
+    this.stopTimer.start();
+    this.dontSeeTagTimer = new Timer();
+    this.dontSeeTagTimer.start();
 
-//             // PID-based corrections
-//             double rotationSpeed = -yawError * kP_Yaw;
-//             double forwardSpeed = (forwardDistance > TARGET_DISTANCE) ? forwardDistance * kP_Forward : 0.0;
-//             double strafeSpeed = -strafeDistance * kP_Strafe; // Strafe correction
+    rotController.setSetpoint(AutoAlignConstants.ROT_SETPOINT_REEF_ALIGNMENT);
+    rotController.setTolerance(AutoAlignConstants.ROT_TOLERANCE_REEF_ALIGNMENT);
 
+    xController.setSetpoint(AutoAlignConstants.X_SETPOINT_REEF_ALIGNMENT);
+    xController.setTolerance(AutoAlignConstants.X_TOLERANCE_REEF_ALIGNMENT);
 
-//             // Drive the robot with swerve adjustments
-//             //driveTrain.drive(forwardSpeed, strafeSpeed, rotationSpeed, true, false);
-//         } else {
-//             // No target detected, stop moving
-//             System.out.println("Can't See");
-//             //driveTrain.drive(0.0, 0.0, 0.0, true, false);
-//         }
-//     }
+    yController.setSetpoint(isRightScore ? AutoAlignConstants.Y_SETPOINT_REEF_ALIGNMENT : -AutoAlignConstants.Y_SETPOINT_REEF_ALIGNMENT);
+    yController.setTolerance(AutoAlignConstants.Y_TOLERANCE_REEF_ALIGNMENT);
 
-//     public void cancel(){
-//         DriveTrain.getInstance().drive(0.0, 0.0, 0.0, true, false);
-//     }
-//     @Override
-//     public void end(boolean interrupted) {
-//         // Stop the drivetrain when toggled off
-//         DriveTrain.getInstance().drive(0.0, 0.0, 0.0, true, false);
-//     }
+    tagID = LimelightHelpers.getFiducialID("");
+  }
 
+  @Override
+  public void execute() {
+    if (LimelightHelpers.getTV("") && LimelightHelpers.getFiducialID("") == tagID) {
+      this.dontSeeTagTimer.reset();
 
-//     @Override
-//     public boolean isFinished() {
-//         // Stop when within target distance
-//         return false;//limelight.getForwardDistance() < TARGET_DISTANCE;
-//     }
-// }
+      double[] postions = LimelightHelpers.getBotPose_TargetSpace("");
+      SmartDashboard.putNumber("x", postions[2]);
+
+      double xSpeed = xController.calculate(postions[2]);
+      SmartDashboard.putNumber("xspee", xSpeed);
+      double ySpeed = -yController.calculate(postions[0]);
+      double rotValue = -rotController.calculate(postions[4]);
+
+    //   drivebase.drive(new Translation2d(xSpeed, ySpeed), rotValue, false);
+    drivebase.drive(xSpeed, ySpeed, rotValue, isRightScore, isRightScore);
+
+      if (!rotController.atSetpoint() ||
+          !yController.atSetpoint() ||
+          !xController.atSetpoint()) {
+        stopTimer.reset();
+      }
+    } else {
+    //   drivebase.drive(new Translation2d(), 0, false);
+        drivebase.drive(0, 0, 0, false, false);
+    }
+
+    SmartDashboard.putNumber("poseValidTimer", stopTimer.get());
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    // drivebase.drive(new Translation2d(), 0, false);
+    drivebase.drive(0, 0, 0, false, false);
+  }
+
+  @Override
+  public boolean isFinished() {
+    // Requires the robot to stay in the correct position for 0.3 seconds, as long as it gets a tag in the camera
+    return this.dontSeeTagTimer.hasElapsed(AutoAlignConstants.DONT_SEE_TAG_WAIT_TIME) ||
+        stopTimer.hasElapsed(AutoAlignConstants.POSE_VALIDATION_TIME);
+  }
+}
