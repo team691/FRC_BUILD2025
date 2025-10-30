@@ -23,8 +23,14 @@ public class Shooter extends SubsystemBase {
         Shooter = new TalonFX(3);
         PassThrough = new TalonFX(11);
 
-        Shuffleboard.getTab("MotorCurrent").add("Shooter Motor", Shooter);
-        Shuffleboard.getTab("MotorCurrent").add("Passthrough Motor", Shooter);
+        Shuffleboard.getTab("Motors").add("Shooter Motor Current", Shooter.getStatorCurrent());
+        Shuffleboard.getTab("Motors").add("Shooter Motor Speed", Shooter.get());
+        // TODO: test without .getValue() as well
+        Shuffleboard.getTab("Motors").add("Shooter Motor Position", Shooter.getPosition().getValue());
+
+        Shuffleboard.getTab("Motors").add("Passthrough Motor Current", PassThrough.getStatorCurrent());
+        Shuffleboard.getTab("Motors").add("Passthrough Motor Speed", PassThrough.get());
+        Shuffleboard.getTab("Motors").add("Passthrough Motor Current", Shooter.getPosition().getValue());
     }
 
     public boolean Score(){

@@ -19,7 +19,18 @@ public class Climber extends SubsystemBase {
         tfmotor.setNeutralMode(NeutralModeValue.Brake);
         servo.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
 
-        Shuffleboard.getTab("MotorCurrent").add("Climber Motor", tfmotor);
+        double speed = tfmotor.get();
+        double currPosition = tfmotor.getPosition().getValueAsDouble();
+        Shuffleboard.getTab("Motors").add("Climber Motor Current", tfmotor);
+        Shuffleboard.getTab("Motors").add("Climber Motor Speeds", speed);
+        Shuffleboard.getTab("Motors").add("Climber Motor Position", currPosition);
+
+        double servo_angle = servo.getAngle();
+        double servo_speed = servo.getSpeed();
+        double servo_pos = servo.getPosition();
+        Shuffleboard.getTab("Sensors").add("Servo Angle", servo_angle);
+        Shuffleboard.getTab("Sensors").add("Servo Speed", servo_speed);
+        Shuffleboard.getTab("Sensors").add("Servo Position", servo_pos);
     }
     public Command climb() {
         return run(() -> {

@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -27,6 +29,17 @@ public class Sonar extends SubsystemBase {
         // Get the StatusSignal value
         StatusSignal<Distance> distance = canRangeFinder.getDistance();
         distanceCentimeters = distance.getValueAsDouble() * conversionFactor;
+        StatusSignal<Double> sonar_ambient_signal = canRangeFinder.getAmbientSignal();
+        StatusSignal<Boolean> sonar_is_detected = canRangeFinder.getIsDetected();
+        StatusSignal<Voltage> sonar_supply_voltage = canRangeFinder.getSupplyVoltage();
+        // TODO: get array of FOV position from sonar
+
+        Shuffleboard.getTab("Sensors").add("Sonar Distance", distance);
+        Shuffleboard.getTab("Sensors").add("Sonar Ambient Signal", sonar_ambient_signal);
+        Shuffleboard.getTab("Sensors").add("Sonar Boolean Detection", sonar_is_detected);
+        Shuffleboard.getTab("Sensors").add("Sonar Supply Voltage", sonar_supply_voltage);
+        // Shuffleboard.getTab("Sensors").add("Sonar lah", )
+        // Shuffleboard.getTab("Sensors")
         // System.out.println(distanceCentimeters);
     }
 

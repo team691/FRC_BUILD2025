@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.lang.reflect.Array;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -12,6 +14,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.commands.AutoAlign;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class Controller extends SubsystemBase{
 
@@ -21,6 +24,22 @@ public class Controller extends SubsystemBase{
     boolean shouldRunBelt = true;
     boolean isPressed = false;
     boolean isBeltOn = false;
+
+    double m_joystick1_degrees = m_joystick1.getDirectionDegrees();
+    double m_joystick2_degrees = m_joystick2.getDirectionDegrees();
+    double m_joystick1_magnitude = m_joystick1.getMagnitude();
+    double m_joystick2_magnitude = m_joystick2.getMagnitude();
+
+    double[] m_joystick1_pos = {m_joystick1.getX(), m_joystick1.getY(), m_joystick1.getZ()};
+    double[] m_joystick2_pos = {m_joystick2.getX(), m_joystick2.getY(), m_joystick2.getZ()};
+
+    Shuffleboard.getTab("Joysticks").add("Joystick1 Degrees", m_joystick1_degrees);
+    Shuffleboard.getTab("Joysticks").add("Joystick2 Degrees", m_joystick2_degrees);
+    Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick1_magnitude);
+    Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick2_magnitude);
+    Shuffleboard.getTab("Joysticks").add("Joystick1 Position", m_joystick1_pos);
+    Shuffleboard.getTab("Joysticks").add("Joystick2 Position", m_joystick2_pos);
+    
     // values will be between 0 and 1 in this map
     private double[] PowerMap =
     {
