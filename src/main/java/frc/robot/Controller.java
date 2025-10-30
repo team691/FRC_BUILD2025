@@ -33,13 +33,6 @@ public class Controller extends SubsystemBase{
     double[] m_joystick1_pos = {m_joystick1.getX(), m_joystick1.getY(), m_joystick1.getZ()};
     double[] m_joystick2_pos = {m_joystick2.getX(), m_joystick2.getY(), m_joystick2.getZ()};
 
-    Shuffleboard.getTab("Joysticks").add("Joystick1 Degrees", m_joystick1_degrees);
-    Shuffleboard.getTab("Joysticks").add("Joystick2 Degrees", m_joystick2_degrees);
-    Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick1_magnitude);
-    Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick2_magnitude);
-    Shuffleboard.getTab("Joysticks").add("Joystick1 Position", m_joystick1_pos);
-    Shuffleboard.getTab("Joysticks").add("Joystick2 Position", m_joystick2_pos);
-    
     // values will be between 0 and 1 in this map
     private double[] PowerMap =
     {
@@ -76,6 +69,13 @@ public class Controller extends SubsystemBase{
               DriveTrain.getInstance()));
         //buttonBoard.SetupButtons();
         configureButtonBindings();
+
+        Shuffleboard.getTab("Joysticks").add("Joystick1 Degrees", m_joystick1_degrees);
+        Shuffleboard.getTab("Joysticks").add("Joystick2 Degrees", m_joystick2_degrees);
+        Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick1_magnitude);
+        Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick2_magnitude);
+        Shuffleboard.getTab("Joysticks").add("Joystick1 Position", m_joystick1_pos);
+        Shuffleboard.getTab("Joysticks").add("Joystick2 Position", m_joystick2_pos);
     }
 
     //configures all buttons
