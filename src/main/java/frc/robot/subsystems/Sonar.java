@@ -34,7 +34,7 @@ public class Sonar extends SubsystemBase {
         StatusSignal<Voltage> sonar_supply_voltage = canRangeFinder.getSupplyVoltage();
         // TODO: get array of FOV position from sonar
 
-        Shuffleboard.getTab("Sensors").add("Sonar Distance", distance);
+        Shuffleboard.getTab("Sensors").add("Sonar Distance", distanceCentimeters);
         Shuffleboard.getTab("Sensors").add("Sonar Ambient Signal", sonar_ambient_signal);
         Shuffleboard.getTab("Sensors").add("Sonar Boolean Detection", sonar_is_detected);
         Shuffleboard.getTab("Sensors").add("Sonar Supply Voltage", sonar_supply_voltage);
