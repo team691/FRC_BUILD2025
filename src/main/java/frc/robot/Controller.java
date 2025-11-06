@@ -73,7 +73,7 @@ public class Controller extends SubsystemBase{
         Shuffleboard.getTab("Joysticks").add("Joystick1 Degrees", m_joystick1_degrees);
         Shuffleboard.getTab("Joysticks").add("Joystick2 Degrees", m_joystick2_degrees);
         Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick1_magnitude);
-        Shuffleboard.getTab("Joysticks").add("Joystick1 Magnitude", m_joystick2_magnitude);
+        Shuffleboard.getTab("Joysticks").add("Joystick2 Magnitude", m_joystick2_magnitude);
         Shuffleboard.getTab("Joysticks").add("Joystick1 Position", m_joystick1_pos);
         Shuffleboard.getTab("Joysticks").add("Joystick2 Position", m_joystick2_pos);
     }
@@ -112,8 +112,8 @@ public class Controller extends SubsystemBase{
         new JoystickButton(m_joystick2, 5)
             .whileTrue(Climber.getInstance().stop());
 
-        new JoystickButton(m_joystick1, m_joystick1.getPOV(90))
-            .onTrue(new AutoAlign(true, DriveTrain.getInstance()).withTimeout(3));
+        // new JoystickButton(m_joystick1, m_joystick1.getPOV(90))
+        //     .onTrue(new AutoAlign(true, DriveTrain.getInstance()).withTimeout(3));
     }
     // m_joystick1.povRight().onTrue(new AlignToReefTagRelative(true, drivebase).withTimeout(3));
 	// m_joystick1.povLeft().onTrue(new AlignToReefTagRelative(false, drivebase).withTimeout(3));
