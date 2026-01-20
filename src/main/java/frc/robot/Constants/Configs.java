@@ -34,13 +34,13 @@ public final class Configs {
 
         /** numbers imported from {@link TunerConstants} TODO: for REV chassis, replace them with actual numbers */
         public static final Distance WHEEL_RADIUS = 
-        Meters.of(2);
+        Inches.of(2); //Meters.of
 
-        public static final double DRIVE_GEAR_RATIO = 0.410;
-        public static final double STEER_GEAR_RATIO = 0;
+        public static final double DRIVE_GEAR_RATIO = 6.12; //0.410
+        public static final double STEER_GEAR_RATIO = 21.4286; //0
 
-        public static final Voltage STEER_FRICTION_VOLTAGE = Volts.of(12);
-        public static final Voltage DRIVE_FRICTION_VOLTAGE = Volts.of(12);
+        public static final Voltage STEER_FRICTION_VOLTAGE = Volts.of(0.25); //12
+        public static final Voltage DRIVE_FRICTION_VOLTAGE = Volts.of(0.1); //12
         public static final MomentOfInertia STEER_INERTIA = KilogramSquareMeters.of(0.025);
 
         /* adjust current limit */
@@ -53,7 +53,7 @@ public final class Configs {
         public static final Current OVER_CURRENT_WARNING = Amps.of(240);
 
         /** translations of the modules to the robot center, in FL, FR, BL, BR */
-        static double value = Meters.convertFrom(0.33, Inch);
+        static double value = Meters.convertFrom(11.25, Inch); //0.33
         public static final Translation2d[] MODULE_TRANSLATIONS = new Translation2d[] {
                 new Translation2d(value,value),
                 new Translation2d(value, -value),

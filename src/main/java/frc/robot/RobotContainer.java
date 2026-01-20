@@ -106,6 +106,7 @@ public class RobotContainer {
         }
 
       SmartDashboard.putData("Auto Chooser", m_chooser);
+      //SmartDahsboard.putData("Odometry", m_odometry);
       // Add PathPlanner autonomous
       new EventTrigger("Shoot").whileTrue(Shooter.getInstance().shootTest(-0.50));
       new EventTrigger("Stop Shoot").whileTrue(Shooter.getInstance().stopShoot());

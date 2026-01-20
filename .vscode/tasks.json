@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+        "label": "WPILib: Simulate Java (GUI)",
+        "type": "shell",
+        "command": "./gradlew",
+        "args": [
+            "simulateJava"
+        ],
+        "options": {
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "JAVA_HOME": "/Users/mpoberez/wpilib/2025/jdk"
+            }
+        },
+        "problemMatcher": []
+    },
+    {
+        "type": "shell",
+        "problemMatcher": [],
+        "label": "wpilib: Java Simulate"
+    },
+]
+}
